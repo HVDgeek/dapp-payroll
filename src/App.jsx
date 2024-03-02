@@ -3,6 +3,8 @@ import Header from "./components/Header";
 import Sidebar from "./components/Sidebar";
 import Dashboard from "./pages/Dashboard";
 import Footer from "./components/Footer";
+import Organizations from "./pages/Organizations";
+import Payrolls from "./pages/Payrolls";
 
 const App = () => {
   return (
@@ -13,6 +15,8 @@ const App = () => {
         <div className="p-5 sm:px-20">
           <Routes>
             <Route path="/" element={<Dashboard />} />
+            <Route path="/organizations" element={<Organizations />} />
+            <Route path="/payrolls" element={<Payrolls />} />
           </Routes>
         </div>
         <div className="lg:hidden h-20"></div>
