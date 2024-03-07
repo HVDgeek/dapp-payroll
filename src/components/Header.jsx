@@ -1,7 +1,9 @@
 import { GrSearch } from "react-icons/gr";
+import { useSelector } from "react-redux";
 
 function Header() {
-  const connectedAccount = "0xfd...2266";
+  const { connectedAccount } = useSelector((state) => state.globalState);
+
   return (
     <header className="flex justify-start items-center border-b border-gray-300 space-x-10 p-5 sm:px-20">
       <div className="flex justify-start items-center space-x-2 w-full">
