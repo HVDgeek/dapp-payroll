@@ -5,4 +5,7 @@ export const globalActions = {
   setFundTreasureModal: (state, action) => {
     state.fundTreasuryModal = action.payload;
   },
+  setCreateOrgModal: (state, action) => {
+    state.createOrgModal = action.payload;
+  },
 };

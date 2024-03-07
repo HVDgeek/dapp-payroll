@@ -1,9 +1,14 @@
 import React from "react";
+import { useDispatch } from "react-redux";
 import { SlOrganization } from "react-icons/sl";
 import { AiFillThunderbolt } from "react-icons/ai";
 import { FaUser } from "react-icons/fa";
+import { globalActions } from "../store/globalSlices";
 
 function ActionCard({ organization, worker, payroll }) {
+  const dispatch = useDispatch();
+  const { setCreateOrgModal } = globalActions;
+
   return (
     <div className="flex space-x-2 flex-col lg:flex-row flex-wrap justify-start my-10">
       {payroll ? (
@@ -73,6 +78,7 @@ function ActionCard({ organization, worker, payroll }) {
             className="uppercase inline-block bg-transparent text-purple-600 font-medium py-2.5 px-6
           leading-tight rounded-md hover:bg-gray-100
            focus:outline-none focus:ring-0 transition duration-150 ease-in-out"
+            onClick={() => dispatch(setCreateOrgModal("scale-100"))}
           >
             Add
           </button>
