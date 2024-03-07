@@ -7,7 +7,7 @@ function Header() {
       <div className="flex justify-start items-center space-x-2 w-full">
         <GrSearch size={20} />
         <input
-          className="w-full flex-auto min-w-0 block text-base bg-transparent
+          className="w-full flex-auto min-w-0 block text-base bg-transparent outline-none border-0
           px-3 font-normal text-gray-700 rounded bg-clip-padding transition ease-in-out focus:text-gray-700 focus:outline-none focus:ring-0"
           type="search"
           placeholder="Search"
