@@ -1,5 +1,4 @@
 import ActionCard from "../components/ActionCard";
-import CreateOrg from "../components/CreateOrg";
 import FundTreasury from "../components/FundTreasury";
 import Stats from "../components/Stats";
 import Treasury from "../components/Treasury";
@@ -23,7 +22,6 @@ const Dashboard = () => {
       <Treasury stats={stats} />
       <ActionCard organization />
       <FundTreasury />
-      <CreateOrg />
     </>
   );
 };

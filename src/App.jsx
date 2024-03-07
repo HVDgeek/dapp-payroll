@@ -3,8 +3,10 @@ import Header from "./components/Header";
 import Sidebar from "./components/Sidebar";
 import Dashboard from "./pages/Dashboard";
 import Footer from "./components/Footer";
+import CreateOrg from "./components/CreateOrg";
 import Organizations from "./pages/Organizations";
 import Payrolls from "./pages/Payrolls";
+import Organization from "./pages/Organization";
 
 const App = () => {
   return (
@@ -16,12 +18,14 @@ const App = () => {
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/organizations" element={<Organizations />} />
+            <Route path="/organization/:id" element={<Organization />} />
             <Route path="/payrolls" element={<Payrolls />} />
           </Routes>
         </div>
         <div className="lg:hidden h-20"></div>
         <Footer />
       </main>
+      <CreateOrg />
     </div>
   );
 };

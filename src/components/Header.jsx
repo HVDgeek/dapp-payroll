@@ -1,5 +1,6 @@
 import { GrSearch } from "react-icons/gr";
 import { useSelector } from "react-redux";
+import { truncate } from "../services/blockchain";
 
 function Header() {
   const { connectedAccount } = useSelector((state) => state.globalState);
@@ -21,7 +22,7 @@ function Header() {
         focus:shadow-lg focus:outline-none focus:ring-0 active:bg-purple-700 transition duration-150 ease-in-out"
           type="button"
         >
-          {connectedAccount || "Connect"}
+          {truncate(connectedAccount, 5, 4, 12) || "Connect"}
         </button>
       </div>
     </header>
