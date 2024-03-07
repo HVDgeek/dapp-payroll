@@ -18,7 +18,7 @@ function Sidebar() {
           <span className="ml-1">Payroll</span>
         </div>
       </header>
-      <div>
+      <div className="flex flex-col p-5">
         <NavItem
           Icon={<HiOutlineHome size={20} />}
           route="/"
