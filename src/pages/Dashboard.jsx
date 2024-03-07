@@ -1,9 +1,11 @@
 import Stats from "../components/Stats";
+import Treasury from "../components/Treasury";
 
 const Dashboard = () => {
   const stats = {
     id: 0,
     account: "",
+    cuts: 0,
     balance: 0,
     name: "",
     description: "",
@@ -15,6 +17,7 @@ const Dashboard = () => {
   return (
     <>
       <Stats stats={stats} />
+      <Treasury stats={stats} />
     </>
   );
 };
