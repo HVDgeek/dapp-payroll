@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { globalState as GlobalState } from "./states/globalStaters";
+import { globalState as GlobalState } from "./states/globalStates";
 import { globalActions as GlobalActions } from "./actions/globalActions";
 
 const globalSlice = createSlice({

@@ -1,4 +1,5 @@
 import ActionCard from "../components/ActionCard";
+import FundTreasury from "../components/FundTreasury";
 import Stats from "../components/Stats";
 import Treasury from "../components/Treasury";
 
@@ -20,6 +21,7 @@ const Dashboard = () => {
       <Stats stats={stats} />
       <Treasury stats={stats} />
       <ActionCard organization />
+      <FundTreasury />
     </>
   );
 };

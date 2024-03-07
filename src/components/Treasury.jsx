@@ -1,6 +1,11 @@
 import PropTypes from "prop-types";
+import { useDispatch } from "react-redux";
+import { globalActions } from "../store/globalSlices";
 
 function Treasury({ stats }) {
+  const dispatch = useDispatch();
+  const { setFundTreasureModal } = globalActions;
+
   return (
     <div className="my-10">
       <h4 className="font-semibold text-2xl">Treasury</h4>
@@ -35,6 +40,7 @@ function Treasury({ stats }) {
         leading-tight rounded-full shadow-md hover:bg-purple-700 hover:shadow-lg focus:bg-purple-700
         focus:shadow-lg focus:outline-none focus:ring-0 active:bg-purple-700 transition duration-150 ease-in-out"
             type="button"
+            onClick={() => dispatch(setFundTreasureModal("scale-100"))}
           >
             Fund account
           </button>
