@@ -7,6 +7,7 @@ import CreateOrg from "./components/CreateOrg";
 import Organizations from "./pages/Organizations";
 import Payrolls from "./pages/Payrolls";
 import Organization from "./pages/Organization";
+import Payroll from "./pages/Payroll";
 
 const App = () => {
   return (
@@ -20,6 +21,7 @@ const App = () => {
             <Route path="/organizations" element={<Organizations />} />
             <Route path="/organization/:id" element={<Organization />} />
             <Route path="/payrolls" element={<Payrolls />} />
+            <Route path="/payroll/:id" element={<Payroll />} />
           </Routes>
         </div>
         <div className="lg:hidden h-20"></div>

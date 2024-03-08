@@ -4,22 +4,29 @@ import { truncate } from "../services/blockchain";
 import { useNavigate } from "react-router-dom";
 import UpdateOrg from "./UpdateOrg";
 import { globalActions } from "../store/globalSlices";
+import UpdatePayroll from "./UpdatePayroll";
 
-function OrgsCard({ organizations }) {
+function PayrollsCard({ payrolls }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [organization, setOrganization] = useState(null);
-  const { setUpdateOrgModal } = globalActions;
+  const [payroll, setPayroll] = useState(null);
+  const { setUpdatePayrollModal } = globalActions;
 
-  const onEdit = (org) => {
-    setOrganization(org);
-    dispatch(setUpdateOrgModal("scale-100"));
+  const onEdit = (payroll) => {
+    setPayroll(payroll);
+    dispatch(setUpdatePayrollModal("scale-100"));
+  };
+
+  const onDeletePayroll = async (payroll) => {
+    if (confirm("Are you sure? This is irreversible!")) {
+      console.log(payroll);
+    }
   };
 
   return (
     <div>
       <h4 className="font-semibold text-2xl mb-3">
-        List: ({organizations.length} organizations)
+        List: ({payrolls.length} Payrolls)
       </h4>
       <div
         className="bg-white rounded-lg p-5 max-h-[calc(100vh_-_22rem)]
@@ -33,31 +40,31 @@ function OrgsCard({ organizations }) {
                 scope="col"
                 className="text-sm font-medium px-6 py-4 text-left"
               >
-                Organization
+                Payroll
               </th>
               <th
                 scope="col"
                 className="text-sm font-medium px-6 py-4 text-left"
               >
-                Account
+                Officer
               </th>
               <th
                 scope="col"
                 className="text-sm font-medium px-6 py-4 text-left"
               >
-                Balance
+                payment Date
               </th>
               <th
                 scope="col"
                 className="text-sm font-medium px-6 py-4 text-left"
               >
-                Payments
+                Salary
               </th>
               <th
                 scope="col"
                 className="text-sm font-medium px-6 py-4 text-left"
               >
-                Cuts
+                Cut (%)
               </th>
               <th
                 scope="col"
@@ -68,34 +75,36 @@ function OrgsCard({ organizations }) {
             </tr>
           </thead>
           <tbody>
-            {organizations.map((org, i) => (
+            {payrolls.map((payroll, i) => (
               <tr
                 key={i}
                 className="border-b border-gray-200 transition duration-300 ease-in-out"
               >
                 <td className="text-sm font-light px-6 py-4 whitespace-nowrap">
-                  <span className="font-semibold">{org.name}</span>
+                  <span className="font-semibold">{payroll.name}</span>
                 </td>
                 <td className="text-sm font-light px-6 py-4 whitespace-nowrap">
                   <span className="font-semibold">
-                    {truncate(org.account, 4, 4, 11)}
+                    {truncate(payroll.owner, 4, 4, 11)}
                   </span>
                 </td>
                 <td className="text-sm font-light px-6 py-4 whitespace-nowrap">
-                  <span className="font-semibold">{org.balance}</span>
+                  <span className="font-semibold">
+                    {new Date(payroll.timestamp).toLocaleDateString()}
+                  </span>
                 </td>
                 <td className="text-sm font-light px-6 py-4 whitespace-nowrap">
-                  <span className="font-semibold">{org.payments}</span>
+                  <span className="font-semibold">{payroll.salary}</span>
                 </td>
                 <td className="text-sm font-light px-6 py-4 whitespace-nowrap">
-                  <span className="font-semibold">{org.cuts}</span>
+                  <span className="font-semibold">{payroll.cut}</span>
                 </td>
                 <td className="flex justify-start items-center text-sm font-light px-6 py-4 whitespace-nowrap">
                   <button
                     className="inline-block bg-transparent px-6 py-2.5
                     text-green-600 font-medium text-xs leading-tight uppercase
                   "
-                    onClick={() => navigate(`/organization/${org.id}`)}
+                    onClick={() => navigate(`/payroll/${payroll.id}`)}
                   >
                     View
                   </button>
@@ -103,9 +112,17 @@ function OrgsCard({ organizations }) {
                     className="inline-block bg-transparent px-6 py-2.5
                     text-purple-600 font-medium text-xs leading-tight uppercase
                   "
-                    onClick={() => onEdit(org)}
+                    onClick={() => onEdit(payroll)}
                   >
                     Edit
+                  </button>
+                  <button
+                    className="inline-block bg-transparent px-6 py-2.5
+                    text-red-600 font-medium text-xs leading-tight uppercase
+                  "
+                    onClick={() => onDeletePayroll(payroll)}
+                  >
+                    Remove
                   </button>
                 </td>
               </tr>
@@ -113,9 +130,9 @@ function OrgsCard({ organizations }) {
           </tbody>
         </table>
       </div>
-      {organization && <UpdateOrg organization={organization} />}
+      {payroll && <UpdatePayroll payroll={payroll} />}
     </div>
   );
 }
 
-export default OrgsCard;
+export default PayrollsCard;

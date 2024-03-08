@@ -11,4 +11,10 @@ export const globalActions = {
   setUpdateOrgModal: (state, action) => {
     state.updateOrgModal = action.payload;
   },
+  setCreatePayrollModal: (state, action) => {
+    state.createPayrollModal = action.payload;
+  },
+  setUpdatePayrollModal: (state, action) => {
+    state.updatePayrollModal = action.payload;
+  },
 };
