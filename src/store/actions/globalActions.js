@@ -8,4 +8,7 @@ export const globalActions = {
   setCreateOrgModal: (state, action) => {
     state.createOrgModal = action.payload;
   },
+  setUpdateOrgModal: (state, action) => {
+    state.updateOrgModal = action.payload;
+  },
 };

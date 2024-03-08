@@ -1,9 +1,21 @@
-import React from "react";
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 import { truncate } from "../services/blockchain";
 import { useNavigate } from "react-router-dom";
+import UpdateOrg from "./UpdateOrg";
+import { globalActions } from "../store/globalSlices";
 
 function OrgsCard({ organizations }) {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const [organization, setOrganization] = useState(null);
+  const { setUpdateOrgModal } = globalActions;
+
+  const onEdit = (org) => {
+    setOrganization(org);
+    dispatch(setUpdateOrgModal("scale-100"));
+  };
+
   return (
     <div>
       <h4 className="font-semibold text-2xl mb-3">
@@ -57,7 +69,10 @@ function OrgsCard({ organizations }) {
           </thead>
           <tbody>
             {organizations.map((org) => (
-              <tr className="border-b border-gray-200 transition duration-300 ease-in-out">
+              <tr
+                key={org.id}
+                className="border-b border-gray-200 transition duration-300 ease-in-out"
+              >
                 <td className="text-sm font-light px-6 py-4 whitespace-nowrap">
                   <span className="font-semibold">{org.name}</span>
                 </td>
@@ -88,6 +103,7 @@ function OrgsCard({ organizations }) {
                     className="inline-block bg-transparent px-6 py-2.5
                     text-purple-600 font-medium text-xs leading-tight uppercase
                   "
+                    onClick={() => onEdit(org)}
                   >
                     Edit
                   </button>
@@ -97,6 +113,7 @@ function OrgsCard({ organizations }) {
           </tbody>
         </table>
       </div>
+      {organization && <UpdateOrg organization={organization} />}
     </div>
   );
 }

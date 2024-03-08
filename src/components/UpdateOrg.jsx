@@ -1,37 +1,43 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { FaTimes, FaEthereum } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { globalActions } from "../store/globalSlices";
 import { useForm } from "../hooks/use-form";
 
-function CreateOrg() {
+function UpdateOrg({ organization }) {
   const dispatch = useDispatch();
-  const { createOrgModal } = useSelector((state) => state.globalState);
-  const { setCreateOrgModal } = globalActions;
-  const { formData, handleChange, resetForm } = useForm({
-    name: "",
-    description: "",
+  const { updateOrgModal } = useSelector((state) => state.globalState);
+  const { setUpdateOrgModal } = globalActions;
+  const { formData, handleChange, setFormData } = useForm({
+    name: organization.name,
+    description: organization.description,
   });
+
+  useEffect(() => {
+    setFormData({
+      name: organization.name,
+      description: organization.description,
+    });
+  }, [organization, setFormData]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("DATA =>", formData);
-    resetForm();
+    console.log("DATA => ", JSON.stringify(formData, null, 2));
   };
 
   return (
     <div
       className={`fixed top-0 left-0 bg-black w-screen h-screen flex justify-center items-center
-      z-50 bg-opacity-50 transform transition-transform duration-300 ${createOrgModal}`}
+      z-50 bg-opacity-50 transform transition-transform duration-300 ${updateOrgModal}`}
     >
       <div className="bg-white shadow-xl shadow-black rounded-xl w-11/12 md:w-2/5 h-7/12 p-6">
         <form onSubmit={handleSubmit} className="flex flex-col">
           <div className="flex justify-between items-center">
-            <p className="font-semibold text-black">Create Organization</p>
+            <p className="font-semibold text-black">Edit Organization</p>
             <button
               className="border-0 bg-transparent focus:outline-none "
               type="button"
-              onClick={() => dispatch(setCreateOrgModal("scale-0"))}
+              onClick={() => dispatch(setUpdateOrgModal("scale-0"))}
             >
               <FaTimes className="text-black" size={20} />
             </button>
@@ -78,7 +84,7 @@ function CreateOrg() {
           "
             type="submit"
           >
-            Create Organization
+            Updade Organization
           </button>
         </form>
       </div>
@@ -86,4 +92,4 @@ function CreateOrg() {
   );
 }
 
-export default CreateOrg;
+export default UpdateOrg;
