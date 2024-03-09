@@ -5,4 +5,6 @@ export const globalState = {
   updateOrgModal: "scale-0",
   createPayrollModal: "scale-0",
   updatePayrollModal: "scale-0",
+  workerDetailsModal: "invisible",
+  updateWorkerModal: "scale-0",
 };
