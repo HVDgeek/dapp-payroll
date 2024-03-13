@@ -8,7 +8,7 @@ import PropTypes from "prop-types";
 function Footer() {
   return (
     <aside
-      className="flex justify-center items-center bg-white
+      className="lg:hidden flex justify-center items-center bg-white
     border-t border-gray-300 px-5 sm:px-20 fixed bottom-0 left-0 right-0"
     >
       <div className="flex justify-evenly items-center space-x-10">
@@ -16,7 +16,6 @@ function Footer() {
           Icon={<HiOutlineHome size={20} />}
           route="/"
           label={"Dashboard"}
-          isActive
         />
         <NavItem
           Icon={<SlOrganization size={20} />}
@@ -33,15 +32,18 @@ function Footer() {
   );
 }
 
-const NavItem = ({ Icon, route, label, isActive }) => {
+const NavItem = ({ Icon, route, label }) => {
   const inactiveClass = `flex flex-col justify-start items-center space-x-1 rounded-full hover:bg-gray-200
   p-3 font-semibold hover:text-purple-700 my-1 transition ease-in-out`;
 
-  const activeClass = `flex flex-col justify-start items-center space-x-1 rounded-full hover:bg-gray-200
+  const activeClass = `flex flex-col justify-start items-center space-x-1 bg-gray-200 rounded-full hover:bg-gray-200
   p-3 font-semibold text-purple-700 my-1 transition ease-in-out`;
 
   return (
-    <NavLink to={route} className={isActive ? activeClass : inactiveClass}>
+    <NavLink
+      to={route}
+      className={({ isActive }) => (isActive ? activeClass : inactiveClass)}
+    >
       {Icon}
       <span>{label}</span>
     </NavLink>
@@ -52,7 +54,6 @@ NavItem.propTypes = {
   Icon: PropTypes.element.isRequired,
   label: PropTypes.string.isRequired,
   route: PropTypes.string.isRequired,
-  isActive: PropTypes.bool.isRequired,
 };
 
 export default Footer;

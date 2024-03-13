@@ -51,7 +51,7 @@ const payrollData = {
 
 function Payroll() {
   return (
-    <div className="h-screen">
+    <div>
       <WorkersCard workers={workersArray} payroll={payrollData} />
       <ActionCard worker />
       <CreateWorker />

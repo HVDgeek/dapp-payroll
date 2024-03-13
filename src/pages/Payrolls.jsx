@@ -60,7 +60,7 @@ const payrollsData = [
 
 function Payrolls() {
   return (
-    <div className="h-screen">
+    <div>
       <PayrollsCard payrolls={payrollsData} />
       <ActionCard payroll />
       <CreatePayroll />

@@ -23,7 +23,6 @@ function Sidebar() {
           Icon={<HiOutlineHome size={20} />}
           route="/"
           label={"Dashboard"}
-          isActive
         />
         <NavItem
           Icon={<SlOrganization size={20} />}
@@ -40,15 +39,18 @@ function Sidebar() {
   );
 }
 
-const NavItem = ({ Icon, route, label, isActive }) => {
+const NavItem = ({ Icon, route, label }) => {
   const inactiveClass = `flex justify-start items-center space-x-1 rounded-full hover:bg-gray-200
   p-3 font-semibold hover:text-purple-700 my-1 transition ease-in-out`;
 
-  const activeClass = `flex justify-start items-center space-x-1 rounded-full hover:bg-gray-200
+  const activeClass = `flex justify-start items-center space-x-1 rounded-full hover:bg-gray-200 bg-gray-200
   p-3 font-semibold text-purple-700 my-1 transition ease-in-out`;
 
   return (
-    <NavLink to={route} className={isActive ? activeClass : inactiveClass}>
+    <NavLink
+      to={route}
+      className={({ isActive }) => (isActive ? activeClass : inactiveClass)}
+    >
       {Icon}
       <span>{label}</span>
     </NavLink>
@@ -59,7 +61,6 @@ NavItem.propTypes = {
   Icon: PropTypes.element.isRequired,
   label: PropTypes.string.isRequired,
   route: PropTypes.string.isRequired,
-  isActive: PropTypes.bool.isRequired,
 };
 
 export default Sidebar;

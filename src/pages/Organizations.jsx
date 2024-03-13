@@ -43,7 +43,7 @@ const organizationData = [
 
 function Organizations() {
   return (
-    <div className="h-screen">
+    <div>
       <OrgsCard organizations={organizationData} />
       <ActionCard organization />
     </div>
