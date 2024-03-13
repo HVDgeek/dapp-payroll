@@ -7,7 +7,8 @@ import { globalActions } from "../store/globalSlices";
 
 function ActionCard({ organization, worker, payroll }) {
   const dispatch = useDispatch();
-  const { setCreateOrgModal, setCreatePayrollModal } = globalActions;
+  const { setCreateOrgModal, setCreatePayrollModal, setCreateWorkerModal } =
+    globalActions;
 
   return (
     <div className="flex space-x-2 flex-col lg:flex-row flex-wrap justify-start my-10">
@@ -55,6 +56,7 @@ function ActionCard({ organization, worker, payroll }) {
             className="uppercase inline-block bg-transparent text-purple-600 font-medium py-2.5 px-6
           leading-tight rounded-md hover:bg-gray-100
            focus:outline-none focus:ring-0 transition duration-150 ease-in-out"
+            onClick={() => dispatch(setCreateWorkerModal("scale-100"))}
           >
             Add
           </button>

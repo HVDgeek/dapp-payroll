@@ -7,4 +7,5 @@ export const globalState = {
   updatePayrollModal: "scale-0",
   workerDetailsModal: "invisible",
   updateWorkerModal: "scale-0",
+  createWorkerModal: "scale-0",
 };

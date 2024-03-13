@@ -1,6 +1,8 @@
 import React from "react";
 import WorkersCard from "../components/WorkersCard";
 import ActionCard from "../components/ActionCard";
+import CreateWorker from "../components/CreateWorker";
+import UpdateWorker from "../components/UpdateWorker";
 
 const workersArray = [
   {
@@ -52,6 +54,7 @@ function Payroll() {
     <div className="h-screen">
       <WorkersCard workers={workersArray} payroll={payrollData} />
       <ActionCard worker />
+      <CreateWorker />
     </div>
   );
 }

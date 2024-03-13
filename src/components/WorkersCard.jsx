@@ -3,6 +3,7 @@ import { useDispatch } from "react-redux";
 import { truncate } from "../services/blockchain";
 import { globalActions } from "../store/globalSlices";
 import WorkerDetails from "./WorkerDetails";
+import UpdateWorker from "./UpdateWorker";
 
 function WorkersCard({ workers, payroll }) {
   const dispatch = useDispatch();
@@ -115,6 +116,7 @@ function WorkersCard({ workers, payroll }) {
         </table>
       </div>
       {worker && <WorkerDetails worker={worker} payroll={payroll} />}
+      {worker && <UpdateWorker worker={worker} payroll={payroll} />}
     </div>
   );
 }

@@ -23,4 +23,7 @@ export const globalActions = {
   setUpdateWorkerModal: (state, action) => {
     state.updateWorkerModal = action.payload;
   },
+  setCreateWorkerModal: (state, action) => {
+    state.createWorkerModal = action.payload;
+  },
 };
