@@ -142,6 +142,31 @@ contract DappPayroll is Ownable, ReentrancyGuard {
     return organizations[id];
   }
 
+  function createPayroll(uint oid, uint salary, uint cut, string memory name, string memory description ) public  {
+    require(organizations[oid].id != 0,  "Organization not found!");
+    require(salary > 0 ether, "Salary must be greater than zero!");
+    require(cut > 0 && cut <= 100, "Percentage Cut must be between (1 - 100)");
+    require(bytes(name).length > 0, "Name cannot be empty!");
+    require(bytes(description).length > 0, "Description cannot be empty!");
+
+    _totalPayrolls.increment();
+    PayrollStruct memory payroll;
+
+    payroll.id = _totalPayrolls.current();
+    payroll.name = name;
+    payroll.description = description;
+    payroll.salary = salary;
+    payroll.cut = cut;
+    payroll.oid = oid;
+    payroll.organization = organizations[oid].account;
+    payroll.timestamp = getCurrentTime();
+
+    payrolls[payroll.id] = payroll;
+
+    organizations[oid].payrolls++;
+
+  }
+
   function getCurrentTime() internal view returns (uint) {
     return (block.timestamp * 1000) + 1000;
   }
