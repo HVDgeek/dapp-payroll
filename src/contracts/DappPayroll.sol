@@ -199,6 +199,7 @@ contract DappPayroll is Ownable, ReentrancyGuard {
         require(payrolls[id].id != 0, "Payroll not found!");
         require(payrolls[id].officer == msg.sender, "Unauthorized entity!");
         require(organizations[oid].id != 0, "Organization not found!");
+        require(payrolls[id].status == Status.OPEN, "Payroll not available!");
         require(salary > 0 ether, "Salary must be greater than zero!");
         require(
             cut > 0 && cut <= 100,
@@ -212,6 +213,57 @@ contract DappPayroll is Ownable, ReentrancyGuard {
         payrolls[id].salary = salary;
         payrolls[id].cut = cut;
         payrolls[id].organization = organizations[oid].account;
+    }
+
+    function updatePayroll(uint id) public {
+        require(payrolls[id].id != 0, "Payroll not found!");
+        require(payrolls[id].officer == msg.sender, "Unauthorized entity!");
+        require(payrolls[id].status == Status.OPEN, "Payroll not available!");
+
+        payrolls[id].status = Status.DELECTED;
+        organizations[payrolls[id].oid].payrolls--;
+    }
+
+    function submitPayroll(uint id) public {
+        require(payrolls[id].id != 0, "Payroll not found!");
+        require(payrolls[id].officer == msg.sender, "Unauthorized entity!");
+        require(payrolls[id].status == Status.OPEN, "Payroll not available!");
+
+        payrolls[id].status = Status.PENDING;
+    }
+
+    function approvePayroll(uint id) public {
+        require(payrolls[id].id != 0, "Payroll not found!");
+        require(
+            payrolls[id].organization == msg.sender,
+            "Unauthorized entity!"
+        );
+        require(payrolls[id].status == Status.PENDING, "Payroll not Pending!");
+
+        payrolls[id].status = Status.APPROVED;
+    }
+
+    function rejectPayroll(uint id) public {
+        require(payrolls[id].id != 0, "Payroll not found!");
+        require(
+            payrolls[id].organization == msg.sender,
+            "Unauthorized entity!"
+        );
+        require(payrolls[id].status == Status.PENDING, "Payroll not Pending!");
+
+        payrolls[id].status = Status.REJECTED;
+    }
+
+    function openPayroll(uint id) public {
+        require(payrolls[id].id != 0, "Payroll not found!");
+        require(
+            payrolls[id].officer == msg.sender ||
+                payrolls[id].organization == msg.sender,
+            "Unauthorized entity!"
+        );
+        require(payrolls[id].status == Status.PENDING, "Payroll not Pending!");
+
+        payrolls[id].status = Status.OPEN;
     }
 
     function getCurrentTime() internal view returns (uint) {
