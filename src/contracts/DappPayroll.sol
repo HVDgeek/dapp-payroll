@@ -77,10 +77,7 @@ contract DappPayroll is Ownable, ReentrancyGuard {
   mapping (uint => mapping (uint => WorkerStruct)) workersOf;
 
   // Function that help us to create new organization
-  function createOrg(
-    string memory name,
-    string memory description
-  ) public  {
+  function createOrg( string memory name, string memory description ) public  {
     require(bytes(name).length > 0, "Name cannot be empty!");
     require(bytes(description).length > 0, "Description cannot be empty!");
 
@@ -95,6 +92,17 @@ contract DappPayroll is Ownable, ReentrancyGuard {
 
     organizations[org.id] = org;
 
+  }
+
+  // Update existing organization
+  function updateOrg(uint id, string memory name, string memory description ) public  {
+    require(organizations[id].id != 0,  "Organization not found!");
+    require(organizations[id].account == msg.sender,  "Unouthorized entity!");
+    require(bytes(name).length > 0, "Name cannot be empty!");
+    require(bytes(description).length > 0, "Description cannot be empty!");
+
+    organizations[id].name = name;
+    organizations[id].description = description;
   }
 
   function getCurrentTime() internal view returns (uint) {
