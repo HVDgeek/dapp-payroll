@@ -13,161 +13,208 @@ using Counters for Counters.Counter;: This line enables the use of the Counters.
 data type from the Counters contract.
  */
 
-
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
 contract DappPayroll is Ownable, ReentrancyGuard {
-  using Counters for Counters.Counter;
+    using Counters for Counters.Counter;
 
-  Counters.Counter private _totalPayrolls;
-  Counters.Counter private _totalOrganizations;
-  Counters.Counter private _totalWorkers;
+    Counters.Counter private _totalPayrolls;
+    Counters.Counter private _totalOrganizations;
+    Counters.Counter private _totalWorkers;
 
-  enum Status {
-    OPEN,
-    PENDING,
-    DELECTED,
-    APPROVED,
-    REJECTED,
-    PAID
-  }
-
-  struct OrganizationStruct {
-    uint id;
-    string name;
-    string description;
-    address account;
-    uint payrolls;
-    uint workers;
-    uint payments;
-    uint balance;
-    uint cuts;
-    uint timestamp;
-  }
-
-  struct PayrollStruct {
-    uint id;
-    uint oid;
-    string name;
-    string description;
-    address officer;
-    address organization;
-    uint salary;
-    uint workers;
-    uint cut;
-    Status status;
-    uint timestamp;
-  }
-
-  struct WorkerStruct {
-    uint id;  // unique identify id
-    uint wid; // id in the payroll
-    string name;
-    address account;
-    uint timestamp;
-  }
-
-  // Stablishing relationship between data
-  mapping (uint => OrganizationStruct ) organizations;
-  mapping (uint => PayrollStruct ) payrolls;
-  mapping (uint => WorkerStruct ) workers;
-  mapping (address => bool ) workerExists;
-  mapping (uint => mapping (uint => WorkerStruct)) workersOf;
-
-  // Function that help us to create new organization
-  function createOrg( string memory name, string memory description ) public  {
-    require(bytes(name).length > 0, "Name cannot be empty!");
-    require(bytes(description).length > 0, "Description cannot be empty!");
-
-    _totalOrganizations.increment();
-    OrganizationStruct memory org;
-
-    org.id = _totalOrganizations.current();
-    org.name = name;
-    org.description = description;
-    org.account = msg.sender;
-    org.timestamp = getCurrentTime();
-
-    organizations[org.id] = org;
-
-  }
-
-  // Update existing organization
-  function updateOrg(uint id, string memory name, string memory description ) public  {
-    require(organizations[id].id != 0,  "Organization not found!");
-    require(organizations[id].account == msg.sender,  "Unouthorized entity!");
-    require(bytes(name).length > 0, "Name cannot be empty!");
-    require(bytes(description).length > 0, "Description cannot be empty!");
-
-    organizations[id].name = name;
-    organizations[id].description = description;
-  }
-
-  // Get information about organization
-  function getOrgs() public view returns(OrganizationStruct[] memory Organization) {
-    Organization = new OrganizationStruct[](_totalOrganizations.current());
-
-    for (uint256 i = 0; i < _totalOrganizations.current(); i++) {
-      Organization[i] = organizations[i + 1];
+    enum Status {
+        OPEN,
+        PENDING,
+        DELECTED,
+        APPROVED,
+        REJECTED,
+        PAID
     }
 
-    return Organization
-  }
-
-  function getMyOrgs() public view returns(OrganizationStruct[] memory) {
-    uint availableOrgs = 0;
-
-    for (uint256 i = 0; i < _totalOrganizations.current(); i++) {
-      if (organizations[i + 1].account == msg.sender) {
-        availableOrgs++;
-      }
+    struct OrganizationStruct {
+        uint id;
+        string name;
+        string description;
+        address account;
+        uint payrolls;
+        uint workers;
+        uint payments;
+        uint balance;
+        uint cuts;
+        uint timestamp;
     }
 
-
-    OrganizationStruct[] memory myOrganizations = new OrganizationStruct[](availableOrgs);
-    uint index = 0;
-
-    for (uint256 i = 0; i < _totalOrganizations.current(); i++) {
-      if (organizations[i + 1].account == msg.sender) {
-        myOrganizations[index++] = organizations[i + 1];
-      }
+    struct PayrollStruct {
+        uint id;
+        uint oid;
+        string name;
+        string description;
+        address officer;
+        address organization;
+        uint salary;
+        uint workers;
+        uint cut;
+        Status status;
+        uint timestamp;
     }
 
-    return myOrganizations;
-  }
+    struct WorkerStruct {
+        uint id; // unique identify id
+        uint wid; // id in the payroll
+        string name;
+        address account;
+        uint timestamp;
+    }
 
-  function getOrgById(uint id) public view returns(OrganizationStruct memory Organization) {
-    return organizations[id];
-  }
+    // Stablishing relationship between data
+    mapping(uint => OrganizationStruct) organizations;
+    mapping(uint => PayrollStruct) payrolls;
+    mapping(uint => WorkerStruct) workers;
+    mapping(address => bool) workerExists;
+    mapping(uint => mapping(uint => WorkerStruct)) workersOf;
 
-  function createPayroll(uint oid, uint salary, uint cut, string memory name, string memory description ) public  {
-    require(organizations[oid].id != 0,  "Organization not found!");
-    require(salary > 0 ether, "Salary must be greater than zero!");
-    require(cut > 0 && cut <= 100, "Percentage Cut must be between (1 - 100)");
-    require(bytes(name).length > 0, "Name cannot be empty!");
-    require(bytes(description).length > 0, "Description cannot be empty!");
+    // Function that help us to create new organization
+    function createOrg(string memory name, string memory description) public {
+        require(bytes(name).length > 0, "Name cannot be empty!");
+        require(bytes(description).length > 0, "Description cannot be empty!");
 
-    _totalPayrolls.increment();
-    PayrollStruct memory payroll;
+        _totalOrganizations.increment();
+        OrganizationStruct memory org;
 
-    payroll.id = _totalPayrolls.current();
-    payroll.name = name;
-    payroll.description = description;
-    payroll.salary = salary;
-    payroll.cut = cut;
-    payroll.oid = oid;
-    payroll.organization = organizations[oid].account;
-    payroll.timestamp = getCurrentTime();
+        org.id = _totalOrganizations.current();
+        org.name = name;
+        org.description = description;
+        org.account = msg.sender;
+        org.timestamp = getCurrentTime();
 
-    payrolls[payroll.id] = payroll;
+        organizations[org.id] = org;
+    }
 
-    organizations[oid].payrolls++;
+    // Update existing organization
+    function updateOrg(
+        uint id,
+        string memory name,
+        string memory description
+    ) public {
+        require(organizations[id].id != 0, "Organization not found!");
+        require(
+            organizations[id].account == msg.sender,
+            "Unouthorized entity!"
+        );
+        require(bytes(name).length > 0, "Name cannot be empty!");
+        require(bytes(description).length > 0, "Description cannot be empty!");
 
-  }
+        organizations[id].name = name;
+        organizations[id].description = description;
+    }
 
-  function getCurrentTime() internal view returns (uint) {
-    return (block.timestamp * 1000) + 1000;
-  }
+    // Get information about organization
+    function getOrgs()
+        public
+        view
+        returns (OrganizationStruct[] memory Organization)
+    {
+        Organization = new OrganizationStruct[](_totalOrganizations.current());
+
+        for (uint256 i = 0; i < _totalOrganizations.current(); i++) {
+            Organization[i] = organizations[i + 1];
+        }
+
+        return Organization;
+    }
+
+    function getMyOrgs() public view returns (OrganizationStruct[] memory) {
+        uint availableOrgs = 0;
+
+        for (uint256 i = 0; i < _totalOrganizations.current(); i++) {
+            if (organizations[i + 1].account == msg.sender) {
+                availableOrgs++;
+            }
+        }
+
+        OrganizationStruct[] memory myOrganizations = new OrganizationStruct[](
+            availableOrgs
+        );
+        uint index = 0;
+
+        for (uint256 i = 0; i < _totalOrganizations.current(); i++) {
+            if (organizations[i + 1].account == msg.sender) {
+                myOrganizations[index++] = organizations[i + 1];
+            }
+        }
+
+        return myOrganizations;
+    }
+
+    function getOrgById(
+        uint id
+    ) public view returns (OrganizationStruct memory Organization) {
+        return organizations[id];
+    }
+
+    function createPayroll(
+        uint oid,
+        uint salary,
+        uint cut,
+        string memory name,
+        string memory description
+    ) public {
+        require(organizations[oid].id != 0, "Organization not found!");
+        require(salary > 0 ether, "Salary must be greater than zero!");
+        require(
+            cut > 0 && cut <= 100,
+            "Percentage Cut must be between (1 - 100)"
+        );
+        require(bytes(name).length > 0, "Name cannot be empty!");
+        require(bytes(description).length > 0, "Description cannot be empty!");
+
+        _totalPayrolls.increment();
+        PayrollStruct memory payroll;
+
+        payroll.id = _totalPayrolls.current();
+        payroll.officer = msg.sender;
+        payroll.name = name;
+        payroll.description = description;
+        payroll.salary = salary;
+        payroll.cut = cut;
+        payroll.oid = oid;
+        payroll.organization = organizations[oid].account;
+        payroll.timestamp = getCurrentTime();
+
+        payrolls[payroll.id] = payroll;
+
+        organizations[oid].payrolls++;
+    }
+
+    function updatePayroll(
+        uint id,
+        uint oid,
+        uint salary,
+        uint cut,
+        string memory name,
+        string memory description
+    ) public {
+        require(payrolls[id].id != 0, "Payroll not found!");
+        require(payrolls[id].officer == msg.sender, "Unauthorized entity!");
+        require(organizations[oid].id != 0, "Organization not found!");
+        require(salary > 0 ether, "Salary must be greater than zero!");
+        require(
+            cut > 0 && cut <= 100,
+            "Percentage Cut must be between (1 - 100)"
+        );
+        require(bytes(name).length > 0, "Name cannot be empty!");
+        require(bytes(description).length > 0, "Description cannot be empty!");
+
+        payrolls[id].name = name;
+        payrolls[id].description = description;
+        payrolls[id].salary = salary;
+        payrolls[id].cut = cut;
+        payrolls[id].organization = organizations[oid].account;
+    }
+
+    function getCurrentTime() internal view returns (uint) {
+        return (block.timestamp * 1000) + 1000;
+    }
 }
