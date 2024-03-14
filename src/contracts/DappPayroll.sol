@@ -69,11 +69,35 @@ contract DappPayroll is Ownable, ReentrancyGuard {
     uint timestamp;
   }
 
+  // Stablishing relationship between data
   mapping (uint => OrganizationStruct ) organizations;
   mapping (uint => PayrollStruct ) payrolls;
   mapping (uint => WorkerStruct ) workers;
   mapping (address => bool ) workerExists;
   mapping (uint => mapping (uint => WorkerStruct)) workersOf;
 
+  // Function that help us to create new organization
+  function createOrg(
+    string memory name,
+    string memory description
+  ) public  {
+    require(bytes(name).length > 0, "Name cannot be empty!");
+    require(bytes(description).length > 0, "Description cannot be empty!");
 
+    _totalOrganizations.increment();
+    OrganizationStruct memory org;
+
+    org.id = _totalOrganizations.current();
+    org.name = name;
+    org.description = description;
+    org.account = msg.sender;
+    org.timestamp = getCurrentTime();
+
+    organizations[org.id] = org;
+
+  }
+
+  function getCurrentTime() internal view returns (uint) {
+    return (block.timestamp * 1000) + 1000;
+  }
 }
