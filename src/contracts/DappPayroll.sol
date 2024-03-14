@@ -69,4 +69,11 @@ contract DappPayroll is Ownable, ReentrancyGuard {
     uint timestamp;
   }
 
+  mapping (uint => OrganizationStruct ) organizations;
+  mapping (uint => PayrollStruct ) payrolls;
+  mapping (uint => WorkerStruct ) workers;
+  mapping (address => bool ) workerExists;
+  mapping (uint => mapping (uint => WorkerStruct)) workersOf;
+
+
 }
