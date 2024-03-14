@@ -105,6 +105,43 @@ contract DappPayroll is Ownable, ReentrancyGuard {
     organizations[id].description = description;
   }
 
+  // Get information about organization
+  function getOrgs() public view returns(OrganizationStruct[] memory Organization) {
+    Organization = new OrganizationStruct[](_totalOrganizations.current());
+
+    for (uint256 i = 0; i < _totalOrganizations.current(); i++) {
+      Organization[i] = organizations[i + 1];
+    }
+
+    return Organization
+  }
+
+  function getMyOrgs() public view returns(OrganizationStruct[] memory) {
+    uint availableOrgs = 0;
+
+    for (uint256 i = 0; i < _totalOrganizations.current(); i++) {
+      if (organizations[i + 1].account == msg.sender) {
+        availableOrgs++;
+      }
+    }
+
+
+    OrganizationStruct[] memory myOrganizations = new OrganizationStruct[](availableOrgs);
+    uint index = 0;
+
+    for (uint256 i = 0; i < _totalOrganizations.current(); i++) {
+      if (organizations[i + 1].account == msg.sender) {
+        myOrganizations[index++] = organizations[i + 1];
+      }
+    }
+
+    return myOrganizations;
+  }
+
+  function getOrgById(uint id) public view returns(OrganizationStruct memory Organization) {
+    return organizations[id];
+  }
+
   function getCurrentTime() internal view returns (uint) {
     return (block.timestamp * 1000) + 1000;
   }
