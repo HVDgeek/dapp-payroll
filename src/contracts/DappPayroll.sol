@@ -215,7 +215,7 @@ contract DappPayroll is Ownable, ReentrancyGuard {
         payrolls[id].organization = organizations[oid].account;
     }
 
-    function updatePayroll(uint id) public {
+    function deletePayroll(uint id) public {
         require(payrolls[id].id != 0, "Payroll not found!");
         require(payrolls[id].officer == msg.sender, "Unauthorized entity!");
         require(payrolls[id].status == Status.OPEN, "Payroll not available!");
