@@ -412,6 +412,14 @@ contract DappPayroll is Ownable, ReentrancyGuard {
         workers[workersOf[pid][wid].id].account = account;
     }
 
+    function deleteWorker(uint wid, uint pid) public {
+        require(workersOf[pid][wid].id != 0, "Worker not found!");
+        require(payrolls[pid].officer == msg.sender, "Unauthorized entity!");
+
+        delete workersOf[pid][wid];
+        organizations[payrolls[pid].oid].workers--;
+    }
+
     function getCurrentTime() internal view returns (uint) {
         return (block.timestamp * 1000) + 1000;
     }
