@@ -484,6 +484,33 @@ contract DappPayroll is Ownable, ReentrancyGuard {
         return Workers;
     }
 
+    function fundOrg(uint oid) public payable {
+        require(msg.value > 0 ether, "Insufficient amount!");
+        organizations[oid].balance += msg.value;
+    }
+
+    function getMyStats()
+        public
+        view
+        returns (OrganizationStruct memory Organization)
+    {
+        for (uint256 i = 0; i < _totalOrganizations.current(); i++) {
+            if (organizations[i + 1].account == msg.sender) {
+                Organization.id++;
+                Organization.name = "Your Global Stats";
+                Organization
+                    .description = "Your statistics accross all organizations created by you";
+                Organization.account = msg.sender;
+                Organization.payments += organizations[i + 1].payments;
+                Organization.payrolls += organizations[i + 1].payrolls;
+                Organization.workers += organizations[i + 1].workers;
+                Organization.balance += organizations[i + 1].balance;
+            }
+        }
+
+        return Organization;
+    }
+
     function payTo(address to, uint amount) internal {
         (bool success, ) = payable(to).call{value: amount}("");
         if (!success) revert("Payment failed!");
