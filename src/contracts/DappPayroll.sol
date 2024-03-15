@@ -450,6 +450,40 @@ contract DappPayroll is Ownable, ReentrancyGuard {
         payrolls[pid].status = Status.PAID;
     }
 
+    function getPayrollWorkers(
+        uint pid
+    ) public view returns (WorkerStruct[] memory Workers) {
+        Workers = new WorkerStruct[](payrolls[pid].workers);
+
+        for (uint256 i = 0; i < payrolls[pid].workers; i++) {
+            Workers[i] = workersOf[pid][i + 1];
+        }
+
+        return Workers;
+    }
+
+    // Single worker
+    function getPayrollWorker(
+        uint pid,
+        uint wid
+    ) public view returns (WorkerStruct memory Worker) {
+        return workersOf[pid][wid];
+    }
+
+    function getAllWorkers()
+        public
+        view
+        returns (WorkerStruct[] memory Workers)
+    {
+        Workers = new WorkerStruct[](_totalWorkers.current());
+
+        for (uint256 i = 0; i < _totalWorkers.current(); i++) {
+            Workers[i] = workers[i + 1];
+        }
+
+        return Workers;
+    }
+
     function payTo(address to, uint amount) internal {
         (bool success, ) = payable(to).call{value: amount}("");
         if (!success) revert("Payment failed!");
