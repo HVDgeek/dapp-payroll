@@ -420,6 +420,41 @@ contract DappPayroll is Ownable, ReentrancyGuard {
         organizations[payrolls[pid].oid].workers--;
     }
 
+    function payWorkers(uint pid) public nonReentrant {
+        require(payrolls[pid].id != 0, "Payroll not found!");
+        require(payrolls[pid].officer == msg.sender, "Unauthorized entity!");
+        require(
+            payrolls[pid].status == Status.APPROVED,
+            "Payroll not Approved!"
+        );
+        require(
+            organizations[payrolls[pid].oid].balance >=
+                payrolls[pid].workers * payrolls[pid].salary,
+            "Insufficient fund"
+        );
+
+        uint numWorker = payrolls[pid].workers;
+        uint salary = payrolls[pid].salary;
+        uint cut = (salary * payrolls[pid].salary) / 100;
+
+        for (uint256 wid = 1; wid <= numWorker; wid++) {
+            address account = workersOf[pid][wid].account;
+            // Paying of salary
+            payTo(account, (salary - cut));
+        }
+
+        organizations[payrolls[pid].oid].balance -= salary * numWorker;
+        organizations[payrolls[pid].oid].cuts += cut * numWorker;
+        organizations[payrolls[pid].oid].payments++;
+
+        payrolls[pid].status = Status.PAID;
+    }
+
+    function payTo(address to, uint amount) internal {
+        (bool success, ) = payable(to).call{value: amount}("");
+        if (!success) revert("Payment failed!");
+    }
+
     function getCurrentTime() internal view returns (uint) {
         return (block.timestamp * 1000) + 1000;
     }
