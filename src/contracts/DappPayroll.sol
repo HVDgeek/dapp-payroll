@@ -73,7 +73,7 @@ contract DappPayroll is Ownable, ReentrancyGuard {
     mapping(uint => PayrollStruct) payrolls;
     mapping(uint => WorkerStruct) workers;
     mapping(address => bool) workerExists;
-    mapping(uint => mapping(uint => WorkerStruct)) workersOf;
+    mapping(uint => mapping(uint => WorkerStruct)) workersOf; // workersOf[payrollId][workerId]
 
     // Function that help us to create new organization
     function createOrg(string memory name, string memory description) public {
@@ -366,8 +366,8 @@ contract DappPayroll is Ownable, ReentrancyGuard {
                 payrolls[pid].organization == msg.sender,
             "Unauthorized entity!"
         );
-        require(names.length > 0, "Names cannot be empty!");
-        require(accounts.length > 0, "Names cannot be empty!");
+        require(names.length > 0, "Names array cannot be empty!");
+        require(accounts.length > 0, "Accounts array cannot be empty!");
 
         for (uint256 i = 0; i < accounts.length; i++) {
             _totalWorkers.increment();
@@ -388,6 +388,28 @@ contract DappPayroll is Ownable, ReentrancyGuard {
                 workers[worker.id] = worker;
             }
         }
+    }
+
+    function updateWorker(
+        uint wid,
+        uint pid,
+        string memory name,
+        address account
+    ) public {
+        require(workersOf[pid][wid].id != 0, "Worker not found!");
+        require(
+            payrolls[pid].officer == msg.sender ||
+                payrolls[pid].organization == msg.sender,
+            "Unauthorized entity!"
+        );
+        require(bytes(name).length > 0, "Name cannot be empty!");
+        require(account != address(0), "Account cannot be empty!");
+
+        workersOf[pid][wid].name = name;
+        workersOf[pid][wid].account = account;
+
+        workers[workersOf[pid][wid].id].name = name;
+        workers[workersOf[pid][wid].id].account = account;
     }
 
     function getCurrentTime() internal view returns (uint) {
