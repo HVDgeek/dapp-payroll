@@ -27,7 +27,7 @@ contract DappPayroll is Ownable, ReentrancyGuard {
     enum Status {
         OPEN,
         PENDING,
-        DELECTED,
+        DELETED,
         APPROVED,
         REJECTED,
         PAID
@@ -220,7 +220,7 @@ contract DappPayroll is Ownable, ReentrancyGuard {
         require(payrolls[id].officer == msg.sender, "Unauthorized entity!");
         require(payrolls[id].status == Status.OPEN, "Payroll not available!");
 
-        payrolls[id].status = Status.DELECTED;
+        payrolls[id].status = Status.DELETED;
         organizations[payrolls[id].oid].payrolls--;
     }
 
@@ -264,6 +264,95 @@ contract DappPayroll is Ownable, ReentrancyGuard {
         require(payrolls[id].status == Status.PENDING, "Payroll not Pending!");
 
         payrolls[id].status = Status.OPEN;
+    }
+
+    function getPayrolls()
+        public
+        view
+        returns (PayrollStruct[] memory Payrolls)
+    {
+        uint availablePayrolls = 0;
+
+        for (uint256 i = 0; i < _totalPayrolls.current(); i++) {
+            if (payrolls[i + 1].status != Status.DELETED) {
+                availablePayrolls++;
+            }
+        }
+
+        Payrolls = new PayrollStruct[](availablePayrolls);
+        uint index = 0;
+
+        for (uint256 i = 0; i < _totalPayrolls.current(); i++) {
+            if (payrolls[i + 1].status != Status.DELETED) {
+                Payrolls[index++] = payrolls[i + 1];
+            }
+        }
+
+        return Payrolls;
+    }
+
+    function getMyPayrollsByOrg(
+        uint oid
+    ) public view returns (PayrollStruct[] memory Payrolls) {
+        uint availablePayrolls = 0;
+        for (uint256 i = 0; i < _totalPayrolls.current(); i++) {
+            if (
+                payrolls[i + 1].status != Status.DELETED &&
+                payrolls[i + 1].oid == oid &&
+                (payrolls[i + 1].officer == msg.sender ||
+                    payrolls[i + 1].organization = msg.sender)
+            ) {
+                availablePayrolls++;
+            }
+        }
+
+        Payrolls = new PayrollStruct[](availablePayrolls);
+        uint index = 0;
+
+        for (uint256 i = 0; i < _totalPayrolls.current(); i++) {
+            if (
+                payrolls[i + 1].status != Status.DELETED &&
+                payrolls[i + 1].oid == oid &&
+                (payrolls[i + 1].officer == msg.sender ||
+                    payrolls[i + 1].organization = msg.sender)
+            ) {
+                Payrolls[index++] = payrolls[i + 1];
+            }
+        }
+
+        return Payrolls;
+    }
+
+    function getMyActivePayrolls()
+        public
+        view
+        returns (PayrollStruct[] memory Payrolls)
+    {
+        uint availablePayrolls = 0;
+        for (uint256 i = 0; i < _totalPayrolls.current(); i++) {
+            if (
+                payrolls[i + 1].status != Status.DELETED &&
+                (payrolls[i + 1].officer == msg.sender ||
+                    payrolls[i + 1].organization = msg.sender)
+            ) {
+                availablePayrolls++;
+            }
+        }
+
+        Payrolls = new PayrollStruct[](availablePayrolls);
+        uint index = 0;
+
+        for (uint256 i = 0; i < _totalPayrolls.current(); i++) {
+            if (
+                payrolls[i + 1].status != Status.DELETED &&
+                (payrolls[i + 1].officer == msg.sender ||
+                    payrolls[i + 1].organization = msg.sender)
+            ) {
+                Payrolls[index++] = payrolls[i + 1];
+            }
+        }
+
+        return Payrolls;
     }
 
     function getCurrentTime() internal view returns (uint) {
