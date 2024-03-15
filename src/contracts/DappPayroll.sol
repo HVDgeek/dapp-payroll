@@ -300,7 +300,7 @@ contract DappPayroll is Ownable, ReentrancyGuard {
                 payrolls[i + 1].status != Status.DELETED &&
                 payrolls[i + 1].oid == oid &&
                 (payrolls[i + 1].officer == msg.sender ||
-                    payrolls[i + 1].organization = msg.sender)
+                    payrolls[i + 1].organization == msg.sender)
             ) {
                 availablePayrolls++;
             }
@@ -314,7 +314,7 @@ contract DappPayroll is Ownable, ReentrancyGuard {
                 payrolls[i + 1].status != Status.DELETED &&
                 payrolls[i + 1].oid == oid &&
                 (payrolls[i + 1].officer == msg.sender ||
-                    payrolls[i + 1].organization = msg.sender)
+                    payrolls[i + 1].organization == msg.sender)
             ) {
                 Payrolls[index++] = payrolls[i + 1];
             }
@@ -333,7 +333,7 @@ contract DappPayroll is Ownable, ReentrancyGuard {
             if (
                 payrolls[i + 1].status != Status.DELETED &&
                 (payrolls[i + 1].officer == msg.sender ||
-                    payrolls[i + 1].organization = msg.sender)
+                    payrolls[i + 1].organization == msg.sender)
             ) {
                 availablePayrolls++;
             }
@@ -346,13 +346,48 @@ contract DappPayroll is Ownable, ReentrancyGuard {
             if (
                 payrolls[i + 1].status != Status.DELETED &&
                 (payrolls[i + 1].officer == msg.sender ||
-                    payrolls[i + 1].organization = msg.sender)
+                    payrolls[i + 1].organization == msg.sender)
             ) {
                 Payrolls[index++] = payrolls[i + 1];
             }
         }
 
         return Payrolls;
+    }
+
+    function createWorker(
+        uint pid,
+        string[] memory names,
+        address[] memory accounts
+    ) public {
+        require(payrolls[pid].id != 0, "Payroll not found!");
+        require(
+            payrolls[pid].officer == msg.sender ||
+                payrolls[pid].organization == msg.sender,
+            "Unauthorized entity!"
+        );
+        require(names.length > 0, "Names cannot be empty!");
+        require(accounts.length > 0, "Names cannot be empty!");
+
+        for (uint256 i = 0; i < accounts.length; i++) {
+            _totalWorkers.increment();
+            WorkerStruct memory worker;
+
+            worker.id = _totalWorkers.current();
+            worker.wid = payrolls[pid].workers + 1;
+            worker.name = names[i];
+            worker.account = accounts[i];
+            worker.timestamp = getCurrentTime();
+
+            workersOf[pid][worker.wid] = worker;
+            payrolls[pid].workers++;
+            organizations[payrolls[pid].oid].workers++;
+
+            if (!workerExists[accounts[i]]) {
+                workerExists[accounts[i]] = true;
+                workers[worker.id] = worker;
+            }
+        }
     }
 
     function getCurrentTime() internal view returns (uint) {
