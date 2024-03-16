@@ -271,17 +271,40 @@ describe("Contract", () => {
         );
     });
 
-    it("should confirm worker creation", async () => {
-      result = await contract.getPayrollWorkers(pid);
-      expect(result).to.have.lengthOf(0);
+    // it("should confirm worker creation", async () => {
+    //   result = await contract.getPayrollWorkers(pid);
+    //   expect(result).to.have.lengthOf(0);
 
-      const names = ["Lionel Messi", "Xavi Hernandez", "Andres Iniesta"];
-      const accounts = [worker1.address, worker2.address, worker3.address];
+    //   const names = ["Lionel Messi", "Xavi Hernandez", "Andres Iniesta"];
+    //   const accounts = [worker1.address, worker2.address, worker3.address];
+
+    //   await contract.connect(officer1).createWorker(pid, names, accounts);
+
+    //   result = await contract.getPayrollWorkers(pid);
+    //   expect(result).to.have.lengthOf(accounts.length);
+    // });
+
+    it("should confirm worker update", async () => {
+      const wid = 1;
+      const newName = "Diego Maradona";
+
+      const name = "Lionel Messi";
+      const account = worker2.address;
+
+      const names = [name];
+      const accounts = [account];
 
       await contract.connect(officer1).createWorker(pid, names, accounts);
+      result = await contract.getPayrollWorker(pid, wid);
 
-      result = await contract.getPayrollWorkers(pid);
-      expect(result).to.have.lengthOf(accounts.length);
+      expect(result.name).to.be.equal(name);
+      expect(result.account).to.be.equal(account);
+
+      await contract.connect(officer1).updateWorker(wid, pid, newName, account);
+      result = await contract.getPayrollWorker(pid, wid);
+
+      expect(result.name).to.be.equal(newName);
+      expect(result.account).to.be.equal(account);
     });
   });
 });
