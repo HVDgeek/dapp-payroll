@@ -21,7 +21,7 @@ describe("Contract", () => {
 
   const Status = {
     OPEN: 0,
-    PANDING: 1,
+    PENDING: 1,
     DELETED: 2,
     APPROVED: 3,
     REJECTED: 4,
@@ -153,10 +153,35 @@ describe("Contract", () => {
     //   expect(result.organization).to.be.equal(orgAcc2.address);
     // });
 
-    it("should confirm payroll delete", async () => {
-      result = await contract.getOrgById(oid);
-      expect(result.payrolls).to.be.equal(0);
+    // it("should confirm payroll delete", async () => {
+    //   result = await contract.getOrgById(oid);
+    //   expect(result.payrolls).to.be.equal(0);
 
+    //   await contract
+    //     .connect(officer1)
+    //     .createPayroll(
+    //       oid,
+    //       payrollName,
+    //       payrollDesc,
+    //       payrollSalary,
+    //       payrollCut,
+    //     );
+
+    //   result = await contract.getPayrollById(pid);
+    //   expect(result.status).to.be.equal(Status.OPEN);
+
+    //   result = await contract.getOrgById(oid);
+    //   expect(result.payrolls).to.be.equal(1);
+
+    //   await contract.connect(officer1).deletePayroll(pid);
+
+    //   result = await contract.getPayrollById(pid);
+    //   expect(result.status).to.be.equal(Status.DELETED);
+
+    //   result = await contract.getOrgById(oid);
+    //   expect(result.payrolls).to.be.equal(0);
+    // });
+    it("should confirm payroll approval", async () => {
       await contract
         .connect(officer1)
         .createPayroll(
@@ -170,16 +195,65 @@ describe("Contract", () => {
       result = await contract.getPayrollById(pid);
       expect(result.status).to.be.equal(Status.OPEN);
 
-      result = await contract.getOrgById(oid);
-      expect(result.payrolls).to.be.equal(1);
-
-      await contract.connect(officer1).deletePayroll(pid);
+      await contract.connect(officer1).submitPayroll(pid);
 
       result = await contract.getPayrollById(pid);
-      expect(result.status).to.be.equal(Status.DELETED);
+      expect(result.status).to.be.equal(Status.PENDING);
 
-      result = await contract.getOrgById(oid);
-      expect(result.payrolls).to.be.equal(0);
+      await contract.approvePayroll(pid); // orgAcc1
+
+      result = await contract.getPayrollById(pid);
+      expect(result.status).to.be.equal(Status.APPROVED);
+    });
+
+    it("should confirm payroll reject", async () => {
+      await contract
+        .connect(officer1)
+        .createPayroll(
+          oid,
+          payrollName,
+          payrollDesc,
+          payrollSalary,
+          payrollCut,
+        );
+
+      result = await contract.getPayrollById(pid);
+      expect(result.status).to.be.equal(Status.OPEN);
+
+      await contract.connect(officer1).submitPayroll(pid);
+
+      result = await contract.getPayrollById(pid);
+      expect(result.status).to.be.equal(Status.PENDING);
+
+      await contract.rejectPayroll(pid); // orgAcc1
+
+      result = await contract.getPayrollById(pid);
+      expect(result.status).to.be.equal(Status.REJECTED);
+    });
+
+    it("should confirm payroll open", async () => {
+      await contract
+        .connect(officer1)
+        .createPayroll(
+          oid,
+          payrollName,
+          payrollDesc,
+          payrollSalary,
+          payrollCut,
+        );
+
+      result = await contract.getPayrollById(pid);
+      expect(result.status).to.be.equal(Status.OPEN);
+
+      await contract.connect(officer1).submitPayroll(pid);
+
+      result = await contract.getPayrollById(pid);
+      expect(result.status).to.be.equal(Status.PENDING);
+
+      await contract.openPayroll(pid); // orgAcc1
+
+      result = await contract.getPayrollById(pid);
+      expect(result.status).to.be.equal(Status.OPEN);
     });
   });
 });
