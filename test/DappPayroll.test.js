@@ -257,7 +257,83 @@ describe("Contract", () => {
   //   });
   // });
 
-  describe("Worker", () => {
+  // describe("Worker", () => {
+  //   beforeEach(async () => {
+  //     await contract.createOrg(orgName, orgDesc);
+  //     await contract
+  //       .connect(officer1)
+  //       .createPayroll(
+  //         oid,
+  //         payrollName,
+  //         payrollDesc,
+  //         payrollSalary,
+  //         payrollCut,
+  //       );
+  //   });
+
+  //   it("should confirm worker creation", async () => {
+  //     result = await contract.getPayrollWorkers(pid);
+  //     expect(result).to.have.lengthOf(0);
+
+  //     const names = ["Lionel Messi", "Xavi Hernandez", "Andres Iniesta"];
+  //     const accounts = [worker1.address, worker2.address, worker3.address];
+
+  //     await contract.connect(officer1).createWorker(pid, names, accounts);
+
+  //     result = await contract.getPayrollWorkers(pid);
+  //     expect(result).to.have.lengthOf(accounts.length);
+  //   });
+
+  //   it("should confirm worker update", async () => {
+  //     const wid = 1;
+  //     const newName = "Diego Maradona";
+
+  //     const name = "Lionel Messi";
+  //     const account = worker2.address;
+
+  //     const names = [name];
+  //     const accounts = [account];
+
+  //     await contract.connect(officer1).createWorker(pid, names, accounts);
+  //     result = await contract.getPayrollWorker(pid, wid);
+
+  //     expect(result.name).to.be.equal(name);
+  //     expect(result.account).to.be.equal(account);
+
+  //     await contract.connect(officer1).updateWorker(wid, pid, newName, account);
+  //     result = await contract.getPayrollWorker(pid, wid);
+
+  //     expect(result.name).to.be.equal(newName);
+  //     expect(result.account).to.be.equal(account);
+  //   });
+  //   it("should confirm worker delete", async () => {
+  //     const wid = 1;
+  //     const names = ["Lionel Messi", "Xavi Hernandez", "Andres Iniesta"];
+  //     const accounts = [worker1.address, worker2.address, worker3.address];
+
+  //     result = await contract.getPayrollWorkers(pid);
+  //     expect(result).to.have.lengthOf(0);
+
+  //     result = await contract.getAllWorkers();
+  //     expect(result).to.have.lengthOf(0);
+
+  //     await contract.connect(officer1).createWorker(pid, names, accounts);
+  //     result = await contract.getPayrollWorkers(pid);
+  //     expect(result).to.have.lengthOf(accounts.length);
+
+  //     result = await contract.getAllWorkers();
+  //     expect(result).to.have.lengthOf(accounts.length);
+
+  //     await contract.connect(officer1).deleteWorker(wid, pid);
+  //     result = await contract.getPayrollWorkers(pid);
+  //     expect(result).to.have.lengthOf(accounts.length - 1);
+
+  //     result = await contract.getAllWorkers();
+  //     expect(result).to.have.lengthOf(accounts.length);
+  //   });
+  // });
+
+  describe("Funding and Payment", () => {
     beforeEach(async () => {
       await contract.createOrg(orgName, orgDesc);
       await contract
@@ -269,67 +345,48 @@ describe("Contract", () => {
           payrollSalary,
           payrollCut,
         );
-    });
 
-    // it("should confirm worker creation", async () => {
-    //   result = await contract.getPayrollWorkers(pid);
-    //   expect(result).to.have.lengthOf(0);
-
-    //   const names = ["Lionel Messi", "Xavi Hernandez", "Andres Iniesta"];
-    //   const accounts = [worker1.address, worker2.address, worker3.address];
-
-    //   await contract.connect(officer1).createWorker(pid, names, accounts);
-
-    //   result = await contract.getPayrollWorkers(pid);
-    //   expect(result).to.have.lengthOf(accounts.length);
-    // });
-
-    // it("should confirm worker update", async () => {
-    //   const wid = 1;
-    //   const newName = "Diego Maradona";
-
-    //   const name = "Lionel Messi";
-    //   const account = worker2.address;
-
-    //   const names = [name];
-    //   const accounts = [account];
-
-    //   await contract.connect(officer1).createWorker(pid, names, accounts);
-    //   result = await contract.getPayrollWorker(pid, wid);
-
-    //   expect(result.name).to.be.equal(name);
-    //   expect(result.account).to.be.equal(account);
-
-    //   await contract.connect(officer1).updateWorker(wid, pid, newName, account);
-    //   result = await contract.getPayrollWorker(pid, wid);
-
-    //   expect(result.name).to.be.equal(newName);
-    //   expect(result.account).to.be.equal(account);
-    // });
-    it("should confirm worker delete", async () => {
-      const wid = 1;
       const names = ["Lionel Messi", "Xavi Hernandez", "Andres Iniesta"];
       const accounts = [worker1.address, worker2.address, worker3.address];
 
-      result = await contract.getPayrollWorkers(pid);
-      expect(result).to.have.lengthOf(0);
-
-      result = await contract.getAllWorkers();
-      expect(result).to.have.lengthOf(0);
-
       await contract.connect(officer1).createWorker(pid, names, accounts);
-      result = await contract.getPayrollWorkers(pid);
-      expect(result).to.have.lengthOf(accounts.length);
 
-      result = await contract.getAllWorkers();
-      expect(result).to.have.lengthOf(accounts.length);
+      await contract.connect(officer1).submitPayroll(pid);
+      await contract.connect(orgAcc1).approvePayroll(pid);
+    });
 
-      await contract.connect(officer1).deleteWorker(wid, pid);
-      result = await contract.getPayrollWorkers(pid);
-      expect(result).to.have.lengthOf(accounts.length - 1);
+    // it("should confirm organization funding", async () => {
+    //   const fund = toWei(10);
+    //   result = await contract.getOrgs();
+    //   expect(result).to.have.lengthOf(1);
 
-      result = await contract.getAllWorkers();
-      expect(result).to.have.lengthOf(accounts.length);
+    //   result = await contract.getOrgById(oid);
+    //   expect(result.balance).to.be.equal(0);
+
+    //   await contract.fundOrg(oid, { value: fund });
+    //   result = await contract.getOrgById(oid);
+    //   expect(result.balance).to.be.equal(fund);
+    // });
+
+    it("should confirm worker payments", async () => {
+      const fund = toWei(10);
+
+      await contract.fundOrg(oid, { value: fund });
+      result = await contract.getOrgById(oid);
+      expect(result.balance).to.be.equal(fund);
+
+      await contract.connect(officer1).payWorkers(pid);
+      result = await contract.getPayrollById(pid);
+      expect(result.status).to.be.equal(Status.PAID);
+
+      const salaries = result.salary * 3;
+
+      result = await contract.getOrgById(oid);
+      expect(result.balance).to.be.equal((fund - salaries).toString());
+
+      // console.log(fromWei(fund));
+      // console.log(fromWei(result.balance));
+      // console.log(fromWei(fund) - fromWei(result.balance));
     });
   });
 });

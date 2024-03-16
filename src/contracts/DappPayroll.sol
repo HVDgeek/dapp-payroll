@@ -442,7 +442,7 @@ contract DappPayroll is Ownable, ReentrancyGuard {
 
         uint numWorker = payrolls[pid].workers;
         uint salary = payrolls[pid].salary;
-        uint cut = (salary * payrolls[pid].salary) / 100;
+        uint cut = (salary * payrolls[pid].cut) / 100;
 
         for (uint256 wid = 1; wid <= numWorker; wid++) {
             address account = workersOf[pid][wid].account;

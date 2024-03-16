@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "/home/hiduino/Projects/Blockchain/dapp-mentors/dapp-payroll/src/contracts/DappPayroll.sol": {
-      "lastModificationDate": 1710614794571,
-      "contentHash": "4d8febe553fc91b094c0fa1dca22ae38",
+      "lastModificationDate": 1710617120946,
+      "contentHash": "d65b2884f4991fee53aae1fb027dd801",
       "sourceName": "src/contracts/DappPayroll.sol",
       "solcConfig": {
         "version": "0.8.11",
