@@ -423,6 +423,7 @@ contract DappPayroll is Ownable, ReentrancyGuard {
         require(payrolls[pid].officer == msg.sender, "Unauthorized entity!");
 
         delete workersOf[pid][wid];
+        payrolls[pid].workers--;
         organizations[payrolls[pid].oid].workers--;
     }
 

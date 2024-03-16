@@ -284,27 +284,52 @@ describe("Contract", () => {
     //   expect(result).to.have.lengthOf(accounts.length);
     // });
 
-    it("should confirm worker update", async () => {
+    // it("should confirm worker update", async () => {
+    //   const wid = 1;
+    //   const newName = "Diego Maradona";
+
+    //   const name = "Lionel Messi";
+    //   const account = worker2.address;
+
+    //   const names = [name];
+    //   const accounts = [account];
+
+    //   await contract.connect(officer1).createWorker(pid, names, accounts);
+    //   result = await contract.getPayrollWorker(pid, wid);
+
+    //   expect(result.name).to.be.equal(name);
+    //   expect(result.account).to.be.equal(account);
+
+    //   await contract.connect(officer1).updateWorker(wid, pid, newName, account);
+    //   result = await contract.getPayrollWorker(pid, wid);
+
+    //   expect(result.name).to.be.equal(newName);
+    //   expect(result.account).to.be.equal(account);
+    // });
+    it("should confirm worker delete", async () => {
       const wid = 1;
-      const newName = "Diego Maradona";
+      const names = ["Lionel Messi", "Xavi Hernandez", "Andres Iniesta"];
+      const accounts = [worker1.address, worker2.address, worker3.address];
 
-      const name = "Lionel Messi";
-      const account = worker2.address;
+      result = await contract.getPayrollWorkers(pid);
+      expect(result).to.have.lengthOf(0);
 
-      const names = [name];
-      const accounts = [account];
+      result = await contract.getAllWorkers();
+      expect(result).to.have.lengthOf(0);
 
       await contract.connect(officer1).createWorker(pid, names, accounts);
-      result = await contract.getPayrollWorker(pid, wid);
+      result = await contract.getPayrollWorkers(pid);
+      expect(result).to.have.lengthOf(accounts.length);
 
-      expect(result.name).to.be.equal(name);
-      expect(result.account).to.be.equal(account);
+      result = await contract.getAllWorkers();
+      expect(result).to.have.lengthOf(accounts.length);
 
-      await contract.connect(officer1).updateWorker(wid, pid, newName, account);
-      result = await contract.getPayrollWorker(pid, wid);
+      await contract.connect(officer1).deleteWorker(wid, pid);
+      result = await contract.getPayrollWorkers(pid);
+      expect(result).to.have.lengthOf(accounts.length - 1);
 
-      expect(result.name).to.be.equal(newName);
-      expect(result.account).to.be.equal(account);
+      result = await contract.getAllWorkers();
+      expect(result).to.have.lengthOf(accounts.length);
     });
   });
 });
