@@ -37,7 +37,7 @@ contract DappPayroll is Ownable, ReentrancyGuard {
         uint id;
         string name;
         string description;
-        address account;
+        address account; // admin
         uint payrolls;
         uint workers;
         uint payments;
@@ -52,7 +52,7 @@ contract DappPayroll is Ownable, ReentrancyGuard {
         string name;
         string description;
         address officer;
-        address organization;
+        address organization; // admin
         uint salary;
         uint workers;
         uint cut;
@@ -156,10 +156,10 @@ contract DappPayroll is Ownable, ReentrancyGuard {
 
     function createPayroll(
         uint oid,
-        uint salary,
-        uint cut,
         string memory name,
-        string memory description
+        string memory description,
+        uint salary,
+        uint cut
     ) public {
         require(organizations[oid].id != 0, "Organization not found!");
         require(salary > 0 ether, "Salary must be greater than zero!");
@@ -289,6 +289,12 @@ contract DappPayroll is Ownable, ReentrancyGuard {
         }
 
         return Payrolls;
+    }
+
+    function getPayrollById(
+        uint id
+    ) public view returns (PayrollStruct memory) {
+        return payrolls[id];
     }
 
     function getMyPayrollsByOrg(
