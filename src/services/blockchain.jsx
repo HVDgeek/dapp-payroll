@@ -1,10 +1,28 @@
 import { ethers } from "ethers";
+import abi from "../abis/src/contracts/DappPayroll.sol/DappPayroll.json";
+import address from "../abis/contractAddress.json";
 import { store } from "../store";
 import { globalActions } from "../store/globalSlices";
 
-const { setConnectedAccount } = globalActions;
-
+const { setConnectedAccount, setStats } = globalActions;
 const { ethereum } = window;
+
+const contractAddress = address.address;
+const contractAbi = abi.abi;
+
+const toWei = (num) => ethers.utils.parseEther(num.toString());
+const fromWei = (num) => ethers.utils.formatEther(num);
+
+const getEthereumContract = async () => {
+  const connectedAccount = store.getState().globalState.connectedAccount;
+  const provider = connectedAccount
+    ? new ethers.providers.Web3Provider(ethereum)
+    : new ethers.providers.JsonRpcProvider(process.env.REACT_APP_RPC_URL);
+  const signer = provider.getSigner();
+
+  const contract = new ethers.Contract(contractAddress, contractAbi, signer);
+  return contract;
+};
 
 const connectWallet = async () => {
   try {
@@ -41,6 +59,35 @@ const isConnectedWallet = async () => {
   }
 };
 
+const loadStats = async () => {
+  try {
+    if (!ethereum) reportError("Please install Metamask!");
+    const contract = await getEthereumContract();
+    const stats = await contract.getMyStats();
+    // console.log();
+    store.dispatch(setStats(structuredOrg([stats])[0]));
+  } catch (error) {
+    reportError(error);
+  }
+};
+
+const loadData = async () => {
+  await loadStats();
+};
+
+const structuredOrg = (orgs) =>
+  orgs.map((org) => ({
+    id: org.id.toNumber(),
+    account: org.account,
+    cuts: fromWei(org.cuts),
+    balance: fromWei(org.balance),
+    name: org.name,
+    description: org.description,
+    payments: org.payments.toNumber(),
+    payrolls: org.payrolls.toNumber(),
+    workers: org.workers.toNumber(),
+  }));
+
 const truncate = (text, startChars, endChars, maxLength) => {
   if (text.length <= maxLength) return text;
 
@@ -50,4 +97,4 @@ const truncate = (text, startChars, endChars, maxLength) => {
   return `${start}...${end}`;
 };
 
-export { connectWallet, isConnectedWallet, truncate };
+export { connectWallet, isConnectedWallet, truncate, loadData };

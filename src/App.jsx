@@ -9,15 +9,18 @@ import Payrolls from "./pages/Payrolls";
 import Organization from "./pages/Organization";
 import Payroll from "./pages/Payroll";
 import { useEffect } from "react";
-import { isConnectedWallet } from "./services/blockchain";
+import { isConnectedWallet, loadData } from "./services/blockchain";
 
 const App = () => {
   useEffect(() => {
-    isConnectedWallet().then(() => {
+    const loadBloackchain = async () => {
+      await isConnectedWallet();
+      await loadData();
       console.log("Blockchain loaded!");
-    });
-  }, []);
+    };
 
+    loadBloackchain();
+  }, []);
   return (
     <div className="flex bg-[#f1f1f9] min-h-screen relative">
       <Sidebar />

@@ -54,8 +54,8 @@ Treasury.propTypes = {
   stats: PropTypes.shape({
     id: PropTypes.number.isRequired,
     account: PropTypes.string.isRequired,
-    balance: PropTypes.number.isRequired,
-    cuts: PropTypes.number.isRequired,
+    balance: PropTypes.string.isRequired,
+    cuts: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
     description: PropTypes.string.isRequired,
     payments: PropTypes.number.isRequired,
