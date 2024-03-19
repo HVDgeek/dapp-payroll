@@ -8,8 +8,16 @@ import Organizations from "./pages/Organizations";
 import Payrolls from "./pages/Payrolls";
 import Organization from "./pages/Organization";
 import Payroll from "./pages/Payroll";
+import { useEffect } from "react";
+import { isConnectedWallet } from "./services/blockchain";
 
 const App = () => {
+  useEffect(() => {
+    isConnectedWallet().then(() => {
+      console.log("Blockchain loaded!");
+    });
+  }, []);
+
   return (
     <div className="flex bg-[#f1f1f9] min-h-screen relative">
       <Sidebar />

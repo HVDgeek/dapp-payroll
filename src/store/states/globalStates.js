@@ -1,5 +1,5 @@
 export const globalState = {
-  connectedAccount: "0x123abc456def789ghi123abc456def789ghi123",
+  connectedAccount: "",
   fundTreasuryModal: "scale-0",
   createOrgModal: "scale-0",
   updateOrgModal: "scale-0",

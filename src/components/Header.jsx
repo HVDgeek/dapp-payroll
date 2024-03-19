@@ -1,6 +1,6 @@
 import { GrSearch } from "react-icons/gr";
 import { useSelector } from "react-redux";
-import { truncate } from "../services/blockchain";
+import { connectWallet, truncate } from "../services/blockchain";
 
 function Header() {
   const { connectedAccount } = useSelector((state) => state.globalState);
@@ -21,6 +21,7 @@ function Header() {
         leading-tight rounded-full shadow-md hover:bg-purple-700 hover:shadow-lg focus:bg-purple-700
         focus:shadow-lg focus:outline-none focus:ring-0 active:bg-purple-700 transition duration-150 ease-in-out"
           type="button"
+          onClick={connectWallet}
         >
           {truncate(connectedAccount, 5, 4, 12) || "Connect"}
         </button>
