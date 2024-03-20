@@ -133,6 +133,24 @@ const createOrg = async (name, description) => {
   });
 };
 
+const updateOrg = async ({ id, name, description }) => {
+  if (!ethereum) reportError("Please install Metamask!");
+  return new Promise(async (resolve, reject) => {
+    try {
+      const contract = await getEthereumContract();
+      const tx = await contract.updateOrg(id, name, description);
+
+      tx.wait().then(async () => {
+        await loadData();
+      });
+      resolve(tx);
+    } catch (error) {
+      reportError(error);
+      reject(error);
+    }
+  });
+};
+
 const loadData = async () => {
   await loadStats();
   await loadOrgs();
@@ -172,4 +190,5 @@ export {
   loadData,
   fundOrg,
   createOrg,
+  updateOrg,
 };

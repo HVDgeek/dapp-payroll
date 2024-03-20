@@ -3,12 +3,14 @@ import { FaTimes, FaEthereum } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { globalActions } from "../store/globalSlices";
 import { useForm } from "../hooks/use-form";
+import { updateOrg } from "../services/blockchain";
+import { toast } from "react-toastify";
 
 function UpdateOrg({ organization }) {
   const dispatch = useDispatch();
   const { updateOrgModal } = useSelector((state) => state.globalState);
   const { setUpdateOrgModal } = globalActions;
-  const { formData, handleChange, setFormData } = useForm({
+  const { formData, handleChange, setFormData, resetForm } = useForm({
     name: organization.name,
     description: organization.description,
   });
@@ -20,9 +22,33 @@ function UpdateOrg({ organization }) {
     });
   }, [organization, setFormData]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("DATA => ", JSON.stringify(formData, null, 2));
+    const { name, description } = formData;
+
+    await toast.promise(
+      new Promise(async (resolve, reject) => {
+        await updateOrg({ ...organization, name, description })
+          .then((tx) => {
+            closeModal();
+            resolve(tx);
+          })
+          .catch((error) => {
+            alert(JSON.stringify(error));
+            reject(error);
+          });
+      }),
+      {
+        pending: "Updating organization...",
+        success: "Organization successfully updated",
+        error: "Encountered an error",
+      },
+    );
+  };
+
+  const closeModal = () => {
+    dispatch(setUpdateOrgModal("scale-0"));
+    resetForm();
   };
 
   return (
