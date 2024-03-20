@@ -2,50 +2,49 @@ import React from "react";
 import { FaTimes, FaEthereum } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { globalActions } from "../store/globalSlices";
-
-const organizationData = [
-  {
-    id: 0,
-    name: "Company A",
-    description: "A company focused on blockchain solutions",
-    account: "0x123abc",
-    cuts: 0,
-    balance: 100000,
-    payments: 52000,
-    payrolls: 33000,
-    workers: 20,
-    timestamp: 1645058400, // February 17, 2022 12:00:00 AM GMT
-  },
-  {
-    id: 1,
-    name: "Company B",
-    description: "An innovative tech startup",
-    account: "0x456def",
-    cuts: 0,
-    balance: 72000,
-    payments: 35000,
-    payrolls: 22000,
-    workers: 15,
-    timestamp: 1645144800, // February 18, 2022 12:00:00 AM GMT
-  },
-  {
-    id: 2,
-    name: "Company C",
-    description: "A leading blockchain consultancy",
-    account: "0x789ghi",
-    cuts: 0,
-    balance: 153000,
-    payments: 81000,
-    payrolls: 45000,
-    workers: 30,
-    timestamp: 1645231200, // February 19, 2022 12:00:00 AM GMT
-  },
-];
+import { useForm } from "../hooks/use-form";
+import { fundOrg } from "../services/blockchain";
+import { toast } from "react-toastify";
 
 function FundTreasury() {
   const dispatch = useDispatch();
-  const { fundTreasuryModal } = useSelector((state) => state.globalState);
+  const { fundTreasuryModal, allOrgs } = useSelector(
+    (state) => state.globalState,
+  );
   const { setFundTreasureModal } = globalActions;
+  const { handleChange, resetForm, formData } = useForm({
+    oid: "",
+    amount: "",
+  });
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const { oid, amount } = formData;
+
+    await toast.promise(
+      new Promise(async (resolve, reject) => {
+        await fundOrg(oid, amount)
+          .then((tx) => {
+            closeModal();
+            resolve(tx);
+          })
+          .catch((error) => {
+            alert(JSON.stringify(error));
+            reject(error);
+          });
+      }),
+      {
+        pending: "Funding organization...",
+        success: "Organization successfully fund",
+        error: "Encountered error",
+      },
+    );
+  };
+
+  const closeModal = () => {
+    dispatch(setFundTreasureModal("scale-0"));
+    resetForm();
+  };
 
   return (
     <div
@@ -53,7 +52,7 @@ function FundTreasury() {
       z-50 bg-opacity-50 transform transition-transform duration-300 ${fundTreasuryModal}`}
     >
       <div className="bg-white shadow-xl shadow-black rounded-xl w-11/12 md:w-2/5 h-7/12 p-6">
-        <form className="flex flex-col">
+        <form onSubmit={handleSubmit} className="flex flex-col">
           <div className="flex justify-between items-center">
             <p className="font-semibold text-black">Fund Treasury</p>
             <button
@@ -79,14 +78,17 @@ function FundTreasury() {
 
           <div className="flex justify-between items-center bg-gray-300 rounded-xl mt-5">
             <input
+              name="oid"
               className="block w-full text-sm p-2 text-slate-500 bg-transparent border-0 focus:outline-none focus:ring-0"
               placeholder="Search for organization"
               type="text"
               list="organizations"
               required
+              onChange={handleChange}
+              value={formData.oid}
             />
             <datalist id="organizations">
-              {organizationData.map((org, i) => (
+              {allOrgs.map((org, i) => (
                 <option key={i} value={org.id}>
                   {org.name}
                 </option>
@@ -103,6 +105,8 @@ function FundTreasury() {
               type="number"
               name="amount"
               required
+              onChange={handleChange}
+              value={formData.amount}
             />
           </div>
           <button

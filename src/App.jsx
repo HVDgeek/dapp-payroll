@@ -1,4 +1,6 @@
+import { useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
 import Header from "./components/Header";
 import Sidebar from "./components/Sidebar";
 import Dashboard from "./pages/Dashboard";
@@ -8,7 +10,6 @@ import Organizations from "./pages/Organizations";
 import Payrolls from "./pages/Payrolls";
 import Organization from "./pages/Organization";
 import Payroll from "./pages/Payroll";
-import { useEffect } from "react";
 import { isConnectedWallet, loadData } from "./services/blockchain";
 
 const App = () => {
@@ -39,6 +40,18 @@ const App = () => {
         <Footer />
       </main>
       <CreateOrg />
+      <ToastContainer
+        position="bottom-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={true}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
     </div>
   );
 };

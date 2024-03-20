@@ -29,4 +29,7 @@ export const globalActions = {
   setStats: (state, action) => {
     state.stats = action.payload;
   },
+  setAllOrgs: (state, action) => {
+    state.allOrgs = action.payload;
+  },
 };

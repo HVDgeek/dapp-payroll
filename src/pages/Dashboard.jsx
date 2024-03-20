@@ -8,8 +8,8 @@ const Dashboard = () => {
   const { stats } = useSelector((state) => state.globalState);
   return (
     <>
-      {stats && <Stats stats={stats} />}
-      {stats && <Treasury stats={stats} />}
+      {<Stats stats={stats} />}
+      {<Treasury stats={stats} />}
       <ActionCard organization />
       <FundTreasury />
     </>

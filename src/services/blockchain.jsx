@@ -4,7 +4,7 @@ import address from "../abis/contractAddress.json";
 import { store } from "../store";
 import { globalActions } from "../store/globalSlices";
 
-const { setConnectedAccount, setStats } = globalActions;
+const { setConnectedAccount, setStats, setAllOrgs } = globalActions;
 const { ethereum } = window;
 
 const contractAddress = address.address;
@@ -45,13 +45,15 @@ const isConnectedWallet = async () => {
 
     window.ethereum.on("accountsChanged", async () => {
       store.dispatch(setConnectedAccount(accounts[0]));
+      await loadData();
       await isConnectedWallet();
     });
 
-    if (accounts.length > 0) {
+    if (accounts.length) {
       store.dispatch(setConnectedAccount(accounts[0]));
     } else {
-      reportError("Please connect wallet");
+      // reportError("Please connect wallet");
+      store.dispatch(setConnectedAccount(""));
       console.log("No accounts found");
     }
   } catch (error) {
@@ -65,17 +67,49 @@ const loadStats = async () => {
     const contract = await getEthereumContract();
     const stats = await contract.getMyStats();
     // console.log();
-    store.dispatch(setStats(structuredOrg([stats])[0]));
+    store.dispatch(setStats(structuredOrgs([stats])[0]));
   } catch (error) {
     reportError(error);
   }
 };
 
-const loadData = async () => {
-  await loadStats();
+const loadOrgs = async () => {
+  try {
+    if (!ethereum) reportError("Please install Metamask!");
+    const contract = await getEthereumContract();
+    const orgs = await contract.getOrgs();
+
+    store.dispatch(setAllOrgs(structuredOrgs(orgs)));
+    // console.log(structuredOrgs(orgs));
+  } catch (error) {
+    reportError(error);
+  }
 };
 
-const structuredOrg = (orgs) =>
+const fundOrg = async (oid, amount) => {
+  if (!ethereum) reportError("Please install Metamask!");
+  return new Promise(async (resolve, reject) => {
+    try {
+      const contract = await getEthereumContract();
+      const tx = await contract.fundOrg(oid, { value: toWei(amount) });
+
+      tx.wait().then(async () => {
+        await loadData();
+      });
+      resolve(tx);
+    } catch (error) {
+      reportError(error);
+      reject(error);
+    }
+  });
+};
+
+const loadData = async () => {
+  await loadStats();
+  await loadOrgs();
+};
+
+const structuredOrgs = (orgs) =>
   orgs.map((org) => ({
     id: org.id.toNumber(),
     account: org.account,
@@ -97,4 +131,8 @@ const truncate = (text, startChars, endChars, maxLength) => {
   return `${start}...${end}`;
 };
 
-export { connectWallet, isConnectedWallet, truncate, loadData };
+const reportError = (error) => {
+  console.error(error);
+};
+
+export { connectWallet, isConnectedWallet, truncate, loadData, fundOrg };
