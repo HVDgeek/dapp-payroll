@@ -4,7 +4,7 @@ import address from "../abis/contractAddress.json";
 import { store } from "../store";
 import { globalActions } from "../store/globalSlices";
 
-const { setConnectedAccount, setStats, setAllOrgs } = globalActions;
+const { setConnectedAccount, setStats, setAllOrgs, setOrgs } = globalActions;
 const { ethereum } = window;
 
 const contractAddress = address.address;
@@ -80,7 +80,18 @@ const loadOrgs = async () => {
     const orgs = await contract.getOrgs();
 
     store.dispatch(setAllOrgs(structuredOrgs(orgs)));
-    // console.log(structuredOrgs(orgs));
+  } catch (error) {
+    reportError(error);
+  }
+};
+
+const loadMyOrgs = async () => {
+  try {
+    if (!ethereum) reportError("Please install Metamask!");
+    const contract = await getEthereumContract();
+    const orgs = await contract.getMyOrgs();
+
+    store.dispatch(setOrgs(structuredOrgs(orgs)));
   } catch (error) {
     reportError(error);
   }
@@ -125,6 +136,7 @@ const createOrg = async (name, description) => {
 const loadData = async () => {
   await loadStats();
   await loadOrgs();
+  await loadMyOrgs();
 };
 
 const structuredOrgs = (orgs) =>

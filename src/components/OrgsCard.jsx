@@ -4,6 +4,7 @@ import { truncate } from "../services/blockchain";
 import { useNavigate } from "react-router-dom";
 import UpdateOrg from "./UpdateOrg";
 import { globalActions } from "../store/globalSlices";
+import { FaEthereum } from "react-icons/fa";
 
 function OrgsCard({ organizations }) {
   const navigate = useNavigate();
@@ -81,14 +82,15 @@ function OrgsCard({ organizations }) {
                     {truncate(org.account, 4, 4, 11)}
                   </span>
                 </td>
-                <td className="text-sm font-light px-6 py-4 whitespace-nowrap">
+                <td className="flex justify-start items-center space-x-1 text-sm font-light px-6 py-4 whitespace-nowrap">
+                  <FaEthereum />
                   <span className="font-semibold">{org.balance}</span>
                 </td>
                 <td className="text-sm font-light px-6 py-4 whitespace-nowrap">
                   <span className="font-semibold">{org.payments}</span>
                 </td>
                 <td className="text-sm font-light px-6 py-4 whitespace-nowrap">
-                  <span className="font-semibold">{org.cuts}</span>
+                  <span className="font-semibold">{org.cuts} ETH</span>
                 </td>
                 <td className="flex justify-start items-center text-sm font-light px-6 py-4 whitespace-nowrap">
                   <button

@@ -32,4 +32,7 @@ export const globalActions = {
   setAllOrgs: (state, action) => {
     state.allOrgs = action.payload;
   },
+  setOrgs: (state, action) => {
+    state.orgs = action.payload;
+  },
 };
