@@ -62,6 +62,7 @@ const isConnectedWallet = async () => {
   }
 };
 
+// STATS
 const loadStats = async () => {
   try {
     if (!ethereum) reportError("Please install Metamask!");
@@ -73,6 +74,8 @@ const loadStats = async () => {
     reportError(error);
   }
 };
+
+// ORGANIZATIONS
 
 const loadOrgs = async () => {
   try {
@@ -151,6 +154,8 @@ const updateOrg = async ({ id, name, description }) => {
   });
 };
 
+// PAYROLLS
+
 const createPayroll = async ({ oid, name, description, salary, cut }) => {
   if (!ethereum) reportError("Please install Metamask!");
 
@@ -158,6 +163,33 @@ const createPayroll = async ({ oid, name, description, salary, cut }) => {
     try {
       const contract = await getEthereumContract();
       const tx = await contract.createPayroll(
+        oid,
+        name,
+        description,
+        toWei(Number(salary)),
+        cut,
+      );
+
+      tx.wait().then(async () => {
+        await loadData();
+        await loadPayrollByOrg(oid);
+      });
+      resolve(tx);
+    } catch (error) {
+      reportError(error);
+      reject(error);
+    }
+  });
+};
+
+const updatePayroll = async ({ id, oid, name, description, salary, cut }) => {
+  if (!ethereum) reportError("Please install Metamask!");
+
+  return new Promise(async (resolve, reject) => {
+    try {
+      const contract = await getEthereumContract();
+      const tx = await contract.updatePayroll(
+        id,
         oid,
         name,
         description,
@@ -245,5 +277,6 @@ export {
   createOrg,
   updateOrg,
   createPayroll,
+  updatePayroll,
   loadPayrollByOrg,
 };

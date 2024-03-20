@@ -3,6 +3,8 @@ import { FaTimes, FaEthereum } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { globalActions } from "../store/globalSlices";
 import { useForm } from "../hooks/use-form";
+import { updatePayroll } from "../services/blockchain";
+import { toast } from "react-toastify";
 
 function UpdatePayroll({ payroll }) {
   const dispatch = useDispatch();
@@ -24,9 +26,34 @@ function UpdatePayroll({ payroll }) {
     });
   }, [payroll, setFormData]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("DATA =>", formData);
+    const { name, description, salary, cut } = formData;
+
+    if (!name || !description || !salary || !cut) return;
+
+    await toast.promise(
+      new Promise(async (resolve, reject) => {
+        await updatePayroll({ ...payroll, name, description, salary, cut })
+          .then((tx) => {
+            closeModal();
+            resolve(tx);
+          })
+          .catch((error) => {
+            alert(JSON.stringify(error));
+            reject(error);
+          });
+      }),
+      {
+        pending: "Updating payroll...",
+        success: "Payroll successfully updated",
+        error: "Encountered an error",
+      },
+    );
+  };
+
+  const closeModal = () => {
+    dispatch(setUpdatePayrollModal("scale-0"));
     resetForm();
   };
 
@@ -91,7 +118,7 @@ function UpdatePayroll({ payroll }) {
               type="number"
               name="cut"
               min={1}
-              step={100}
+              max={100}
               value={formData.cut}
               onChange={handleChange}
               required
