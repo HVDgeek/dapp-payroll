@@ -3,6 +3,8 @@ import { FaTimes, FaEthereum } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { globalActions } from "../store/globalSlices";
 import { useForm } from "../hooks/use-form";
+import { toast } from "react-toastify";
+import { createOrg } from "../services/blockchain";
 
 function CreateOrg() {
   const dispatch = useDispatch();
@@ -13,9 +15,32 @@ function CreateOrg() {
     description: "",
   });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("DATA =>", formData);
+    const { name, description } = formData;
+
+    await toast.promise(
+      new Promise(async (resolve, reject) => {
+        await createOrg(name, description)
+          .then((tx) => {
+            closeModal();
+            resolve(tx);
+          })
+          .catch((error) => {
+            alert(JSON.stringify(error));
+            reject(error);
+          });
+      }),
+      {
+        pending: "Creating organization...",
+        success: "Organization successfully created",
+        error: "Encountered an error",
+      },
+    );
+  };
+
+  const closeModal = () => {
+    dispatch(setCreateOrgModal("scale-0"));
     resetForm();
   };
 
