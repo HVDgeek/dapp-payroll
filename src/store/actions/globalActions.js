@@ -35,4 +35,7 @@ export const globalActions = {
   setOrgs: (state, action) => {
     state.orgs = action.payload;
   },
+  setPayrolls: (state, action) => {
+    state.payrolls = action.payload;
+  },
 };

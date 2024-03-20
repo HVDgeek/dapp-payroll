@@ -25,7 +25,9 @@ async function main() {
 
     const payrollName = faker.person.jobTitle() + " Payroll";
     const payrollDesc = faker.lorem.sentence();
-    const payrollSalary = toWei(faker.number.float({ min: 0.1, max: 1 }));
+    const payrollSalary = toWei(
+      faker.number.float({ min: 0.1, max: 1, precision: 0.1 }),
+    );
     const payrollCut = Number(faker.commerce.price({ min: 3, max: 10 }));
 
     await contract.createOrg(orgName, orgDesc);

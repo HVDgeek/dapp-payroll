@@ -80,7 +80,9 @@ function PayrollsCard({ payrolls }) {
                 className="border-b border-gray-200 transition duration-300 ease-in-out"
               >
                 <td className="text-sm font-light px-6 py-4 whitespace-nowrap">
-                  <span className="font-semibold">{payroll.name}</span>
+                  <span className="font-semibold  max-w-[12rem] inline-block truncate">
+                    {payroll.name}
+                  </span>
                 </td>
                 <td className="text-sm font-light px-6 py-4 whitespace-nowrap">
                   <span className="font-semibold">

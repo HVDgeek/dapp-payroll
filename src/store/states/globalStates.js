@@ -10,6 +10,7 @@ export const globalState = {
   createWorkerModal: "scale-0",
   allOrgs: [],
   orgs: [],
+  payrolls: [],
   stats: {
     id: 0,
     account: "",

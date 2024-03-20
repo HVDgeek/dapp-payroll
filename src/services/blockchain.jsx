@@ -4,7 +4,8 @@ import address from "../abis/contractAddress.json";
 import { store } from "../store";
 import { globalActions } from "../store/globalSlices";
 
-const { setConnectedAccount, setStats, setAllOrgs, setOrgs } = globalActions;
+const { setConnectedAccount, setStats, setAllOrgs, setOrgs, setPayrolls } =
+  globalActions;
 const { ethereum } = window;
 
 const contractAddress = address.address;
@@ -90,7 +91,6 @@ const loadMyOrgs = async () => {
     if (!ethereum) reportError("Please install Metamask!");
     const contract = await getEthereumContract();
     const orgs = await contract.getMyOrgs();
-
     store.dispatch(setOrgs(structuredOrgs(orgs)));
   } catch (error) {
     reportError(error);
@@ -151,6 +151,42 @@ const updateOrg = async ({ id, name, description }) => {
   });
 };
 
+const createPayroll = async ({ oid, name, description, salary, cut }) => {
+  if (!ethereum) reportError("Please install Metamask!");
+  return new Promise(async (resolve, reject) => {
+    try {
+      const contract = await getEthereumContract();
+      const tx = await contract.createPayroll(
+        oid,
+        name,
+        description,
+        salary,
+        cut,
+      );
+
+      tx.wait().then(async () => {
+        await loadData();
+      });
+      resolve(tx);
+    } catch (error) {
+      reportError(error);
+      reject(error);
+    }
+  });
+};
+
+const loadPayrollByOrg = async (oid) => {
+  try {
+    if (!ethereum) reportError("Please install Metamask!");
+    const contract = await getEthereumContract();
+    const payrolls = await contract.getMyPayrollsByOrg(oid);
+    // console.log({ payrolls });
+    store.dispatch(setPayrolls(structuredPayrolls(payrolls)));
+  } catch (error) {
+    reportError(error);
+  }
+};
+
 const loadData = async () => {
   await loadStats();
   await loadOrgs();
@@ -168,6 +204,21 @@ const structuredOrgs = (orgs) =>
     payments: org.payments.toNumber(),
     payrolls: org.payrolls.toNumber(),
     workers: org.workers.toNumber(),
+  }));
+
+const structuredPayrolls = (payrolls) =>
+  payrolls.map((payroll) => ({
+    id: payroll.id.toNumber(),
+    oid: payroll.oid.toNumber(),
+    name: payroll.name,
+    description: payroll.description,
+    owner: payroll.officer,
+    organization: payroll.organization,
+    cut: payroll.cut.toNumber(),
+    salary: fromWei(payroll.salary),
+    status: payroll.status,
+    workers: payroll.workers.toNumber(),
+    timestamp: payroll.timestamp.toNumber(),
   }));
 
 const truncate = (text, startChars, endChars, maxLength) => {
@@ -191,4 +242,6 @@ export {
   fundOrg,
   createOrg,
   updateOrg,
+  createPayroll,
+  loadPayrollByOrg,
 };
