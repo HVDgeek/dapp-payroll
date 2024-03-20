@@ -1,11 +1,15 @@
 import React from "react";
+import { useParams } from "react-router-dom";
 import { FaTimes, FaEthereum } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { globalActions } from "../store/globalSlices";
 import { useForm } from "../hooks/use-form";
+import { createPayroll } from "../services/blockchain";
+import { toast } from "react-toastify";
 
 function CreatePayroll() {
   const dispatch = useDispatch();
+  const { id } = useParams();
   const { createPayrollModal } = useSelector((state) => state.globalState);
   const { setCreatePayrollModal } = globalActions;
   const { formData, handleChange, resetForm } = useForm({
@@ -15,9 +19,38 @@ function CreatePayroll() {
     cut: "",
   });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("DATA =>", formData);
+    const { name, description, salary, cut } = formData;
+
+    await toast.promise(
+      new Promise(async (resolve, reject) => {
+        await createPayroll({
+          oid: id,
+          name,
+          description,
+          salary: Number(salary),
+          cut: Number(cut),
+        })
+          .then((tx) => {
+            closeModal();
+            resolve(tx);
+          })
+          .catch((error) => {
+            alert(JSON.stringify(error));
+            reject(error);
+          });
+      }),
+      {
+        pending: "Creating payroll...",
+        success: "Payroll successfully created",
+        error: "Encountered an error",
+      },
+    );
+  };
+
+  const closeModal = () => {
+    dispatch(setCreatePayrollModal("scale-0"));
     resetForm();
   };
 
@@ -82,7 +115,7 @@ function CreatePayroll() {
               type="number"
               name="cut"
               min={1}
-              step={100}
+              max={100}
               value={formData.cut}
               onChange={handleChange}
               required

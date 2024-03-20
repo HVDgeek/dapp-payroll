@@ -153,6 +153,7 @@ const updateOrg = async ({ id, name, description }) => {
 
 const createPayroll = async ({ oid, name, description, salary, cut }) => {
   if (!ethereum) reportError("Please install Metamask!");
+
   return new Promise(async (resolve, reject) => {
     try {
       const contract = await getEthereumContract();
@@ -160,12 +161,13 @@ const createPayroll = async ({ oid, name, description, salary, cut }) => {
         oid,
         name,
         description,
-        salary,
+        toWei(Number(salary)),
         cut,
       );
 
       tx.wait().then(async () => {
         await loadData();
+        await loadPayrollByOrg(oid);
       });
       resolve(tx);
     } catch (error) {

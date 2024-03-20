@@ -69,7 +69,6 @@ function Organization() {
     loadPayrollByOrg(id).then(() => {});
   }, []);
 
-  console.log({ payrolls });
   return (
     <div>
       {payrolls ? <PayrollsCard payrolls={payrolls} /> : null}
