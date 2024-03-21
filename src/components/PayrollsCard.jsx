@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { truncate } from "../services/blockchain";
+import { deletePayroll, truncate } from "../services/blockchain";
 import { useNavigate } from "react-router-dom";
 import { globalActions } from "../store/globalSlices";
 import UpdatePayroll from "./UpdatePayroll";
+import { toast } from "react-toastify";
 
 function PayrollsCard({ payrolls }) {
   const navigate = useNavigate();
@@ -18,7 +19,21 @@ function PayrollsCard({ payrolls }) {
 
   const onDeletePayroll = async (payroll) => {
     if (confirm("Are you sure? This is irreversible!")) {
-      console.log(payroll);
+      await toast.promise(
+        new Promise(async (resolve, reject) => {
+          await deletePayroll(payroll)
+            .then((tx) => resolve(tx))
+            .catch((error) => {
+              alert(JSON.stringify(error));
+              reject(error);
+            });
+        }),
+        {
+          pending: "Deleting payroll...",
+          success: "Payroll successfully deleted",
+          error: "Encountered an error",
+        },
+      );
     }
   };
 

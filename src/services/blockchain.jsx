@@ -209,6 +209,26 @@ const updatePayroll = async ({ id, oid, name, description, salary, cut }) => {
   });
 };
 
+const deletePayroll = async ({ id, oid }) => {
+  if (!ethereum) reportError("Please install Metamask!");
+
+  return new Promise(async (resolve, reject) => {
+    try {
+      const contract = await getEthereumContract();
+      const tx = await contract.deletePayroll(id);
+
+      tx.wait().then(async () => {
+        await loadData();
+        await loadPayrollByOrg(oid);
+      });
+      resolve(tx);
+    } catch (error) {
+      reportError(error);
+      reject(error);
+    }
+  });
+};
+
 const loadPayrollByOrg = async (oid) => {
   try {
     if (!ethereum) reportError("Please install Metamask!");
@@ -278,5 +298,6 @@ export {
   updateOrg,
   createPayroll,
   updatePayroll,
+  deletePayroll,
   loadPayrollByOrg,
 };
