@@ -38,4 +38,10 @@ export const globalActions = {
   setPayrolls: (state, action) => {
     state.payrolls = action.payload;
   },
+  setPayroll: (state, action) => {
+    state.payroll = action.payload;
+  },
+  setWorkers: (state, action) => {
+    state.workers = action.payload;
+  },
 };

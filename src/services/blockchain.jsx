@@ -4,8 +4,15 @@ import address from "../abis/contractAddress.json";
 import { store } from "../store";
 import { globalActions } from "../store/globalSlices";
 
-const { setConnectedAccount, setStats, setAllOrgs, setOrgs, setPayrolls } =
-  globalActions;
+const {
+  setConnectedAccount,
+  setStats,
+  setAllOrgs,
+  setOrgs,
+  setPayrolls,
+  setPayroll,
+  setWorkers,
+} = globalActions;
 const { ethereum } = window;
 
 const contractAddress = address.address;
@@ -229,6 +236,18 @@ const deletePayroll = async ({ id, oid }) => {
   });
 };
 
+const loadPayroll = async (id) => {
+  try {
+    if (!ethereum) reportError("Please install Metamask!");
+    const contract = await getEthereumContract();
+    const payroll = await contract.getPayrollById(id);
+
+    store.dispatch(setPayroll(structuredPayrolls([payroll])[0]));
+  } catch (error) {
+    reportError(error);
+  }
+};
+
 const loadPayrollByOrg = async (oid) => {
   try {
     if (!ethereum) reportError("Please install Metamask!");
@@ -239,6 +258,40 @@ const loadPayrollByOrg = async (oid) => {
   } catch (error) {
     reportError(error);
   }
+};
+
+// WORKERS
+const loadWorkersOf = async (id) => {
+  try {
+    if (!ethereum) reportError("Please install Metamask!");
+    const contract = await getEthereumContract();
+    const workers = await contract.getPayrollWorkers(id);
+
+    store.dispatch(setWorkers(structuredWorkers(workers)));
+  } catch (error) {
+    reportError(error);
+  }
+};
+
+const createWorker = async ({ id, names, accounts }) => {
+  if (!ethereum) reportError("Please install Metamask!");
+
+  return new Promise(async (resolve, reject) => {
+    try {
+      const contract = await getEthereumContract();
+      const tx = await contract.createWorker(id, names, accounts);
+
+      tx.wait().then(async () => {
+        await loadData();
+        await loadPayroll(id);
+        await loadWorkersOf(id);
+      });
+      resolve(tx);
+    } catch (error) {
+      reportError(error);
+      reject(error);
+    }
+  });
 };
 
 const loadData = async () => {
@@ -266,13 +319,22 @@ const structuredPayrolls = (payrolls) =>
     oid: payroll.oid.toNumber(),
     name: payroll.name,
     description: payroll.description,
-    owner: payroll.officer,
-    organization: payroll.organization,
+    officer: payroll.officer.toLowerCase(),
+    organization: payroll.organization.toLowerCase(),
     cut: payroll.cut.toNumber(),
     salary: fromWei(payroll.salary),
     status: payroll.status,
     workers: payroll.workers.toNumber(),
     timestamp: payroll.timestamp.toNumber(),
+  }));
+
+const structuredWorkers = (workers) =>
+  workers.map((worker) => ({
+    id: worker.id.toNumber(),
+    wid: worker.wid.toNumber(),
+    name: worker.name,
+    account: worker.account,
+    timestamp: worker.timestamp.toNumber(),
   }));
 
 const truncate = (text, startChars, endChars, maxLength) => {
@@ -300,4 +362,7 @@ export {
   updatePayroll,
   deletePayroll,
   loadPayrollByOrg,
+  loadPayroll,
+  createWorker,
+  loadWorkersOf,
 };

@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useParams } from "react-router-dom";
 import WorkersCard from "../components/WorkersCard";
 import ActionCard from "../components/ActionCard";
 import CreateWorker from "../components/CreateWorker";
-import UpdateWorker from "../components/UpdateWorker";
+import { loadPayroll, loadWorkersOf } from "../services/blockchain";
+import { useSelector } from "react-redux";
 
 const workersArray = [
   {
@@ -35,26 +37,24 @@ const workersArray = [
   },
 ];
 
-const payrollData = {
-  id: 1,
-  oid: 1001,
-  name: "HR Department",
-  owner: "0xabcdef123456789",
-  organization: "0xfedcba987654321",
-  salary: 5000,
-  cut: 200,
-  description: "Monthly payroll",
-  timestamp: 1647738695000, // Unix timestamp for February 18, 2022
-  workers: 10,
-  status: 3,
-};
-
 function Payroll() {
+  const { id } = useParams();
+  const { payroll, workers } = useSelector((state) => state.globalState);
+
+  useEffect(() => {
+    const loadData = async () => {
+      await loadPayroll(id);
+      await loadWorkersOf(id);
+    };
+
+    loadData();
+  }, [id]);
+
   return (
     <div>
-      <WorkersCard workers={workersArray} payroll={payrollData} />
+      <WorkersCard workers={workers} payroll={payroll} />
       <ActionCard worker />
-      <CreateWorker />
+      <CreateWorker payroll={payroll} />
     </div>
   );
 }

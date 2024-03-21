@@ -67,7 +67,7 @@ function Organization() {
 
   useEffect(() => {
     loadPayrollByOrg(id).then(() => {});
-  }, []);
+  }, [id]);
 
   return (
     <div>

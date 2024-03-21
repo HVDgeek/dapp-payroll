@@ -72,7 +72,9 @@ function WorkersCard({ workers, payroll }) {
                 className="border-b border-gray-200 transition duration-300 ease-in-out"
               >
                 <td className="text-sm font-light px-6 py-4 whitespace-nowrap">
-                  <span className="font-semibold">{worker.name}</span>
+                  <span className="capitalize font-semibold">
+                    {worker.name}
+                  </span>
                 </td>
                 <td className="text-sm font-light px-6 py-4 whitespace-nowrap">
                   <span className="font-semibold">

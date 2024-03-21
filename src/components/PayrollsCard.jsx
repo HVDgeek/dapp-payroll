@@ -101,7 +101,7 @@ function PayrollsCard({ payrolls }) {
                 </td>
                 <td className="text-sm font-light px-6 py-4 whitespace-nowrap">
                   <span className="font-semibold">
-                    {truncate(payroll.owner, 4, 4, 11)}
+                    {truncate(payroll.officer, 4, 4, 11)}
                   </span>
                 </td>
                 <td className="text-sm font-light px-6 py-4 whitespace-nowrap">

@@ -3,9 +3,10 @@ import { FaTimes, FaEthereum } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { globalActions } from "../store/globalSlices";
 import { useForm } from "../hooks/use-form";
-import { truncate } from "../services/blockchain";
+import { createWorker, truncate } from "../services/blockchain";
+import { toast } from "react-toastify";
 
-function CreateWorker() {
+function CreateWorker({ payroll }) {
   const dispatch = useDispatch();
   const { createWorkerModal } = useSelector((state) => state.globalState);
   const { setCreateWorkerModal } = globalActions;
@@ -17,10 +18,29 @@ function CreateWorker() {
   const [names, setNames] = useState([]);
   const [accounts, setAccounts] = useState([]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("DATA =>", { formData, names, accounts });
-    onClose();
+
+    if (names.length < 1 || accounts.length < 1) return;
+
+    await toast.promise(
+      new Promise(async (resolve, reject) => {
+        await createWorker({ ...payroll, names, accounts })
+          .then((tx) => {
+            onClose();
+            resolve(tx);
+          })
+          .catch((error) => {
+            alert(JSON.stringify(error));
+            reject(error);
+          });
+      }),
+      {
+        pending: "Adding workers...",
+        success: "Payroll successfully created",
+        error: "Encountered an error",
+      },
+    );
   };
 
   const addToList = () => {
