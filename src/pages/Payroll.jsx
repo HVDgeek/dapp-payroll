@@ -54,7 +54,7 @@ function Payroll() {
   return (
     <div>
       <WorkersCard workers={workers} payroll={payroll} />
-      {workers && <PayrollActions payroll={payroll} />}
+      {workers.length > 0 && <PayrollActions payroll={payroll} />}
       <ActionCard worker />
       <CreateWorker payroll={payroll} />
     </div>
