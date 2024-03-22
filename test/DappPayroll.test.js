@@ -389,7 +389,7 @@ describe("Contract", () => {
       // console.log(fromWei(fund) - fromWei(result.balance));
     });
 
-    it.only("should confirm opening of peyroll", async () => {
+    it("should confirm opening of peyroll", async () => {
       const fund = toWei(10);
       await contract.fundOrg(oid, { value: fund });
 
@@ -405,6 +405,27 @@ describe("Contract", () => {
 
       result = await contract.getPayrollById(pid);
       expect(result.status).to.be.equal(Status.OPEN);
+    });
+
+    it("should confirm withdrawal of cuts", async () => {
+      const fund = toWei(10);
+      await contract.fundOrg(oid, { value: fund });
+
+      result = await contract.getOrgById(oid);
+      expect(result.cuts).to.be.equal(0);
+
+      await contract.connect(officer1).payWorkers(pid);
+
+      result = await contract.getPayrollById(pid);
+      const cuts = ((result.salary * result.cut) / 100) * 3;
+
+      result = await contract.getOrgById(oid);
+      expect(result.cuts).to.be.equal(cuts.toString());
+
+      await contract.withdrawFrom(oid, worker3.address, cuts.toString());
+
+      result = await contract.getOrgById(oid);
+      expect(result.cuts).to.be.equal(0);
     });
   });
 });

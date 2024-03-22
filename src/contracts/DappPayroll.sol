@@ -512,6 +512,27 @@ contract DappPayroll is Ownable, ReentrancyGuard {
         organizations[oid].balance += msg.value;
     }
 
+    function withdrawFrom(
+        uint oid,
+        address account,
+        uint amount
+    ) public payable {
+        require(organizations[oid].id != 0, "Organization not found!");
+        require(
+            organizations[oid].account == msg.sender,
+            "Unauthorized Entity!"
+        );
+        require(account != address(0), "Account must not be empty");
+        require(
+            amount > 0 ether && organizations[oid].cuts >= amount,
+            "Insufficient amount!"
+        );
+
+        payTo(account, amount);
+
+        organizations[oid].cuts -= amount;
+    }
+
     function getMyStats()
         public
         view
