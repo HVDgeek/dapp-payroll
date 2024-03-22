@@ -8,6 +8,7 @@ export const globalState = {
   workerDetailsModal: "invisible",
   updateWorkerModal: "scale-0",
   createWorkerModal: "scale-0",
+  withdrawModal: "scale-0",
   allOrgs: [],
   orgs: [],
   payrolls: [],

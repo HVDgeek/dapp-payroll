@@ -41,7 +41,7 @@ function PayrollsCard({ payrolls, remActions }) {
   return (
     <div>
       <h4 className="font-semibold text-2xl mb-3">
-        List: ({payrolls.length} Payrolls)
+        List: ({payrolls?.length} Payrolls)
       </h4>
       <div
         className="bg-white rounded-lg p-5 max-h-[calc(100vh_-_22rem)]
@@ -92,7 +92,7 @@ function PayrollsCard({ payrolls, remActions }) {
             </tr>
           </thead>
           <tbody>
-            {payrolls.map((payroll, i) => (
+            {payrolls?.map((payroll, i) => (
               <tr
                 key={i}
                 className="border-b border-gray-200 transition duration-300 ease-in-out"

@@ -47,4 +47,8 @@ export const globalActions = {
   setAllPayrolls: (state, action) => {
     state.allPayrolls = action.payload;
   },
+
+  setWithdrawModal: (state, action) => {
+    state.withdrawModal = action.payload;
+  },
 };

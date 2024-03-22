@@ -3,6 +3,7 @@ import ActionCard from "../components/ActionCard";
 import FundTreasury from "../components/FundTreasury";
 import Stats from "../components/Stats";
 import Treasury from "../components/Treasury";
+import Withdrawal from "../components/Withdrawal";
 
 const Dashboard = () => {
   const { stats } = useSelector((state) => state.globalState);
@@ -12,6 +13,7 @@ const Dashboard = () => {
       {<Treasury stats={stats} />}
       <ActionCard organization />
       <FundTreasury />
+      <Withdrawal />
     </>
   );
 };
