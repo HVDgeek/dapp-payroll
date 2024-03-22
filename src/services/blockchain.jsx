@@ -299,6 +299,27 @@ const revertPayroll = async ({ id }) => {
   });
 };
 
+const rejectPayroll = async ({ id }) => {
+  if (!ethereum) reportError("Please install Metamask!");
+
+  return new Promise(async (resolve, reject) => {
+    try {
+      const contract = await getEthereumContract();
+      const tx = await contract.rejectPayroll(id);
+
+      tx.wait().then(async () => {
+        await loadData();
+        await loadPayroll(id);
+        await loadWorkersOf(id);
+      });
+      resolve(tx);
+    } catch (error) {
+      reportError(error);
+      reject(error);
+    }
+  });
+};
+
 const loadPayroll = async (id) => {
   try {
     if (!ethereum) reportError("Please install Metamask!");
@@ -468,6 +489,7 @@ export {
   submitPayroll,
   approvePayroll,
   revertPayroll,
+  rejectPayroll,
   deletePayroll,
   loadPayrollByOrg,
   loadPayroll,
