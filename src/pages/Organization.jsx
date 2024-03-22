@@ -63,17 +63,19 @@ import { useSelector } from "react-redux";
 
 function Organization() {
   const { id } = useParams();
-  const { payrolls } = useSelector((state) => state.globalState);
+  const { payrolls, connectedAccount } = useSelector(
+    (state) => state.globalState,
+  );
 
   useEffect(() => {
     loadPayrollByOrg(id).then(() => {});
-  }, [id]);
+  }, [id, connectedAccount]);
 
   return (
     <div>
       {payrolls ? <PayrollsCard payrolls={payrolls} /> : null}
       <ActionCard payroll />
-      <CreatePayroll />
+      <CreatePayroll oid={id} />
     </div>
   );
 }

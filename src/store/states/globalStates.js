@@ -11,6 +11,7 @@ export const globalState = {
   allOrgs: [],
   orgs: [],
   payrolls: [],
+  allPyrolls: [],
   payroll: null,
   workers: [],
   stats: {

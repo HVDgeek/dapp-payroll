@@ -5,8 +5,9 @@ import { useNavigate } from "react-router-dom";
 import { globalActions } from "../store/globalSlices";
 import UpdatePayroll from "./UpdatePayroll";
 import { toast } from "react-toastify";
+import { FaEthereum } from "react-icons/fa";
 
-function PayrollsCard({ payrolls }) {
+function PayrollsCard({ payrolls, remActions }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [payroll, setPayroll] = useState(null);
@@ -80,12 +81,14 @@ function PayrollsCard({ payrolls }) {
               >
                 Cut (%)
               </th>
-              <th
-                scope="col"
-                className="text-sm font-medium px-6 py-4 text-left"
-              >
-                Actions
-              </th>
+              {!remActions && (
+                <th
+                  scope="col"
+                  className="text-sm font-medium px-6 py-4 text-left"
+                >
+                  Actions
+                </th>
+              )}
             </tr>
           </thead>
           <tbody>
@@ -109,38 +112,41 @@ function PayrollsCard({ payrolls }) {
                     {new Date(payroll.timestamp).toLocaleDateString()}
                   </span>
                 </td>
-                <td className="text-sm font-light px-6 py-4 whitespace-nowrap">
+                <td className="flex justify-start items-center space-x-1 text-sm font-light px-6 py-4 whitespace-nowrap">
+                  <FaEthereum />
                   <span className="font-semibold">{payroll.salary}</span>
                 </td>
                 <td className="text-sm font-light px-6 py-4 whitespace-nowrap">
                   <span className="font-semibold">{payroll.cut}</span>
                 </td>
-                <td className="flex justify-start items-center text-sm font-light px-6 py-4 whitespace-nowrap">
-                  <button
-                    className="inline-block bg-transparent px-6 py-2.5
+                {!remActions && (
+                  <td className="flex justify-start items-center text-sm font-light px-6 py-4 whitespace-nowrap">
+                    <button
+                      className="inline-block bg-transparent px-6 py-2.5
                     text-green-600 font-medium text-xs leading-tight uppercase
                   "
-                    onClick={() => navigate(`/payroll/${payroll.id}`)}
-                  >
-                    View
-                  </button>
-                  <button
-                    className="inline-block bg-transparent px-6 py-2.5
+                      onClick={() => navigate(`/payroll/${payroll.id}`)}
+                    >
+                      View
+                    </button>
+                    <button
+                      className="inline-block bg-transparent px-6 py-2.5
                     text-purple-600 font-medium text-xs leading-tight uppercase
                   "
-                    onClick={() => onEdit(payroll)}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    className="inline-block bg-transparent px-6 py-2.5
+                      onClick={() => onEdit(payroll)}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      className="inline-block bg-transparent px-6 py-2.5
                     text-red-600 font-medium text-xs leading-tight uppercase
                   "
-                    onClick={() => onDeletePayroll(payroll)}
-                  >
-                    Remove
-                  </button>
-                </td>
+                      onClick={() => onDeletePayroll(payroll)}
+                    >
+                      Remove
+                    </button>
+                  </td>
+                )}
               </tr>
             ))}
           </tbody>

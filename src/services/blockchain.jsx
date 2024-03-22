@@ -12,6 +12,7 @@ const {
   setPayrolls,
   setPayroll,
   setWorkers,
+  setAllPayrolls,
 } = globalActions;
 const { ethereum } = window;
 
@@ -344,6 +345,17 @@ const loadPayrollByOrg = async (oid) => {
   }
 };
 
+const loadAllPayrolls = async () => {
+  try {
+    if (!ethereum) reportError("Please install Metamask!");
+    const contract = await getEthereumContract();
+    const payrolls = await contract.getPayrolls();
+    store.dispatch(setAllPayrolls(structuredPayrolls(payrolls)));
+  } catch (error) {
+    reportError(error);
+  }
+};
+
 // WORKERS
 const loadWorkersOf = async (id) => {
   try {
@@ -424,6 +436,7 @@ const loadData = async () => {
   await loadStats();
   await loadOrgs();
   await loadMyOrgs();
+  await loadAllPayrolls();
 };
 
 const structuredOrgs = (orgs) =>

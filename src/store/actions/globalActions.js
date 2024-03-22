@@ -44,4 +44,7 @@ export const globalActions = {
   setWorkers: (state, action) => {
     state.workers = action.payload;
   },
+  setAllPayrolls: (state, action) => {
+    state.allPayrolls = action.payload;
+  },
 };

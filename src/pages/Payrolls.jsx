@@ -2,6 +2,7 @@ import React from "react";
 import PayrollsCard from "../components/PayrollsCard";
 import ActionCard from "../components/ActionCard";
 import CreatePayroll from "../components/CreatePayroll";
+import { useSelector } from "react-redux";
 
 const payrollsData = [
   {
@@ -59,10 +60,11 @@ const payrollsData = [
 ];
 
 function Payrolls() {
+  const { allPayrolls } = useSelector((state) => state.globalState);
   return (
     <div>
-      <PayrollsCard payrolls={payrollsData} />
-      <ActionCard payroll />
+      <PayrollsCard payrolls={allPayrolls} remActions />
+      <ActionCard payroll noPayrollCreation />
       <CreatePayroll />
     </div>
   );

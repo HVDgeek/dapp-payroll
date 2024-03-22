@@ -7,9 +7,9 @@ import { useForm } from "../hooks/use-form";
 import { createPayroll } from "../services/blockchain";
 import { toast } from "react-toastify";
 
-function CreatePayroll() {
+function CreatePayroll({ oid }) {
   const dispatch = useDispatch();
-  const { id } = useParams();
+  // const { id } = useParams();
   const { createPayrollModal } = useSelector((state) => state.globalState);
   const { setCreatePayrollModal } = globalActions;
   const { formData, handleChange, resetForm } = useForm({
@@ -26,7 +26,7 @@ function CreatePayroll() {
     await toast.promise(
       new Promise(async (resolve, reject) => {
         await createPayroll({
-          oid: id,
+          oid,
           name,
           description,
           salary: Number(salary),
