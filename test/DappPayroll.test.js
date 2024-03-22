@@ -231,7 +231,7 @@ describe("Contract", () => {
       expect(result.status).to.be.equal(Status.REJECTED);
     });
 
-    it("should confirm payroll open", async () => {
+    it("should confirm payroll revert", async () => {
       await contract
         .connect(officer1)
         .createPayroll(
@@ -250,7 +250,7 @@ describe("Contract", () => {
       result = await contract.getPayrollById(pid);
       expect(result.status).to.be.equal(Status.PENDING);
 
-      await contract.openPayroll(pid); // orgAcc1
+      await contract.revertPayroll(pid); // orgAcc1
 
       result = await contract.getPayrollById(pid);
       expect(result.status).to.be.equal(Status.OPEN);
@@ -387,6 +387,24 @@ describe("Contract", () => {
       // console.log(fromWei(fund));
       // console.log(fromWei(result.balance));
       // console.log(fromWei(fund) - fromWei(result.balance));
+    });
+
+    it.only("should confirm opening of peyroll", async () => {
+      const fund = toWei(10);
+      await contract.fundOrg(oid, { value: fund });
+
+      result = await contract.getPayrollById(pid);
+      expect(result.status).to.be.equal(Status.APPROVED);
+
+      await contract.connect(officer1).payWorkers(pid);
+
+      result = await contract.getPayrollById(pid);
+      expect(result.status).to.be.equal(Status.PAID);
+
+      await contract.openPayroll(pid);
+
+      result = await contract.getPayrollById(pid);
+      expect(result.status).to.be.equal(Status.OPEN);
     });
   });
 });

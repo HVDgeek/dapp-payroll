@@ -254,6 +254,22 @@ contract DappPayroll is Ownable, ReentrancyGuard {
         payrolls[id].status = Status.REJECTED;
     }
 
+    function revertPayroll(uint id) public {
+        require(payrolls[id].id != 0, "Payroll not found!");
+        require(
+            payrolls[id].officer == msg.sender ||
+                payrolls[id].organization == msg.sender,
+            "Unauthorized entity!"
+        );
+        require(
+            (payrolls[id].status == Status.PENDING ||
+                payrolls[id].status == Status.REJECTED),
+            "Payroll not Pending!"
+        );
+
+        payrolls[id].status = Status.OPEN;
+    }
+
     function openPayroll(uint id) public {
         require(payrolls[id].id != 0, "Payroll not found!");
         require(
@@ -261,7 +277,7 @@ contract DappPayroll is Ownable, ReentrancyGuard {
                 payrolls[id].organization == msg.sender,
             "Unauthorized entity!"
         );
-        require(payrolls[id].status == Status.PENDING, "Payroll not Pending!");
+        require(payrolls[id].status == Status.PAID, "Payroll not Paid!");
 
         payrolls[id].status = Status.OPEN;
     }
