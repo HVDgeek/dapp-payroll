@@ -5,6 +5,7 @@ import ActionCard from "../components/ActionCard";
 import CreateWorker from "../components/CreateWorker";
 import { loadPayroll, loadWorkersOf } from "../services/blockchain";
 import { useSelector } from "react-redux";
+import PayrollActions from "../components/PayrollActions";
 
 const workersArray = [
   {
@@ -53,6 +54,7 @@ function Payroll() {
   return (
     <div>
       <WorkersCard workers={workers} payroll={payroll} />
+      {workers && <PayrollActions payroll={payroll} />}
       <ActionCard worker />
       <CreateWorker payroll={payroll} />
     </div>
