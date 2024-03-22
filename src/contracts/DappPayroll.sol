@@ -546,6 +546,7 @@ contract DappPayroll is Ownable, ReentrancyGuard {
                     .description = "Your statistics accross all organizations created by you";
                 Organization.account = msg.sender;
                 Organization.payments += organizations[i + 1].payments;
+                Organization.cuts += organizations[i + 1].cuts;
                 Organization.payrolls += organizations[i + 1].payrolls;
                 Organization.workers += organizations[i + 1].workers;
                 Organization.balance += organizations[i + 1].balance;

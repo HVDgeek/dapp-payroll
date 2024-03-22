@@ -3,7 +3,7 @@ import { FaTimes, FaEthereum } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { globalActions } from "../store/globalSlices";
 import { useForm } from "../hooks/use-form";
-import { fundOrg } from "../services/blockchain";
+import { fundOrg, withdrawTo } from "../services/blockchain";
 import { toast } from "react-toastify";
 
 function Withdrawal() {
@@ -24,7 +24,7 @@ function Withdrawal() {
 
     await toast.promise(
       new Promise(async (resolve, reject) => {
-        await fundOrg(oid, account, amount)
+        await withdrawTo(oid, account, amount)
           .then((tx) => {
             closeModal();
             resolve(tx);

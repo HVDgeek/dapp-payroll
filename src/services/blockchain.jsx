@@ -432,6 +432,25 @@ const payWorkers = async ({ id }) => {
   });
 };
 
+const withdrawTo = async (oid, account, amount) => {
+  if (!ethereum) reportError("Please install Metamask!");
+
+  return new Promise(async (resolve, reject) => {
+    try {
+      const contract = await getEthereumContract();
+      const tx = await contract.withdrawFrom(oid, account, toWei(amount));
+
+      tx.wait().then(async () => {
+        await loadData();
+      });
+      resolve(tx);
+    } catch (error) {
+      reportError(error);
+      reject(error);
+    }
+  });
+};
+
 const loadData = async () => {
   await loadStats();
   await loadOrgs();
@@ -509,5 +528,6 @@ export {
   createWorker,
   updateWorker,
   payWorkers,
+  withdrawTo,
   loadWorkersOf,
 };
