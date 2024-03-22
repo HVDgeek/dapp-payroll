@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import {
   approvePayroll,
   payWorkers,
+  revertPayroll,
   submitPayroll,
 } from "../services/blockchain";
 
@@ -70,6 +71,26 @@ function PayrollActions({ payroll }) {
     );
   };
 
+  const handleRevert = async (e) => {
+    e.preventDefault();
+
+    await toast.promise(
+      new Promise(async (resolve, reject) => {
+        await revertPayroll(payroll)
+          .then((tx) => resolve(tx))
+          .catch((error) => {
+            alert(JSON.stringify(error));
+            reject(error);
+          });
+      }),
+      {
+        pending: "Reverting payroll submition...",
+        success: "Payroll revertion successfully",
+        error: "Encountered an error",
+      },
+    );
+  };
+
   return payroll &&
     connectedAccount == payroll.officer &&
     payroll.status == 0 ? (
@@ -107,6 +128,16 @@ function PayrollActions({ payroll }) {
       rounded-full text-sm px-5 py-2.5 text-center mr-2 mb-2"
       >
         Reject
+      </button>
+    </div>
+  ) : payroll && connectedAccount == payroll.officer && payroll.status == 1 ? (
+    <div className="my-4">
+      <button
+        className="text-white bg-red-700 hover:bg-red-800 focus:outline-none font-medium
+    rounded-full text-sm px-5 py-2.5 text-center mr-2 mb-2"
+        onClick={handleRevert}
+      >
+        Revert
       </button>
     </div>
   ) : payroll && connectedAccount == payroll.officer && payroll.status == 3 ? (
