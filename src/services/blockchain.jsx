@@ -294,6 +294,27 @@ const createWorker = async ({ id, names, accounts }) => {
   });
 };
 
+const updateWorker = async ({ wid, id, name, account }) => {
+  if (!ethereum) reportError("Please install Metamask!");
+
+  return new Promise(async (resolve, reject) => {
+    try {
+      const contract = await getEthereumContract();
+      const tx = await contract.updateWorker(wid, id, name, account);
+
+      tx.wait().then(async () => {
+        await loadData();
+        await loadPayroll(id);
+        await loadWorkersOf(id);
+      });
+      resolve(tx);
+    } catch (error) {
+      reportError(error);
+      reject(error);
+    }
+  });
+};
+
 const loadData = async () => {
   await loadStats();
   await loadOrgs();
@@ -364,5 +385,6 @@ export {
   loadPayrollByOrg,
   loadPayroll,
   createWorker,
+  updateWorker,
   loadWorkersOf,
 };

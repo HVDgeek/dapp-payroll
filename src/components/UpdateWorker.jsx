@@ -3,6 +3,8 @@ import { FaTimes, FaEthereum } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { globalActions } from "../store/globalSlices";
 import { useForm } from "../hooks/use-form";
+import { updateWorker } from "../services/blockchain";
+import { toast } from "react-toastify";
 
 function UpdateWorker({ worker, payroll }) {
   const dispatch = useDispatch();
@@ -20,10 +22,30 @@ function UpdateWorker({ worker, payroll }) {
     });
   }, [worker, payroll, setFormData]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("DATA =>", { formData, worker, payroll });
-    onClose();
+
+    const { name, account } = formData;
+    if (!name || !account) return;
+
+    await toast.promise(
+      new Promise(async (resolve, reject) => {
+        await updateWorker({ ...worker, ...payroll, name, account })
+          .then((tx) => {
+            onClose();
+            resolve(tx);
+          })
+          .catch((error) => {
+            alert(JSON.stringify(error));
+            reject(error);
+          });
+      }),
+      {
+        pending: "Updating workers...",
+        success: "Payroll successfully updated",
+        error: "Encountered an error",
+      },
+    );
   };
 
   const onClose = () => {
