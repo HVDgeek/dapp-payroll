@@ -29,7 +29,23 @@ function WorkersCard({ workers, payroll }) {
   return (
     <div>
       <h4 className="font-semibold text-2xl mb-3">
-        List: ({workers.length} workers)
+        <span>({workers.length} workers)</span>
+        <div className="text-sm">
+          <span>Status: </span>
+          {payroll?.status == 0 ? (
+            <span className="text-gray-700">Open</span>
+          ) : payroll?.status == 1 ? (
+            <span className="text-yellow-700">Panding</span>
+          ) : payroll?.status == 2 ? (
+            <span className="text-red-700">Deleted</span>
+          ) : payroll?.status == 3 ? (
+            <span className="text-green-700">Approved</span>
+          ) : payroll?.status == 4 ? (
+            <span className="text-red-700">Rejected</span>
+          ) : (
+            <span className="text-green-700">Paid</span>
+          )}
+        </div>
       </h4>
       <div
         className="bg-white rounded-lg p-5 max-h-[calc(100vh_-_22rem)]

@@ -236,6 +236,48 @@ const deletePayroll = async ({ id, oid }) => {
   });
 };
 
+const submitPayroll = async ({ id }) => {
+  if (!ethereum) reportError("Please install Metamask!");
+
+  return new Promise(async (resolve, reject) => {
+    try {
+      const contract = await getEthereumContract();
+      const tx = await contract.submitPayroll(id);
+
+      tx.wait().then(async () => {
+        await loadData();
+        await loadPayroll(id);
+        await loadWorkersOf(id);
+      });
+      resolve(tx);
+    } catch (error) {
+      reportError(error);
+      reject(error);
+    }
+  });
+};
+
+const approvePayroll = async ({ id }) => {
+  if (!ethereum) reportError("Please install Metamask!");
+
+  return new Promise(async (resolve, reject) => {
+    try {
+      const contract = await getEthereumContract();
+      const tx = await contract.approvePayroll(id);
+
+      tx.wait().then(async () => {
+        await loadData();
+        await loadPayroll(id);
+        await loadWorkersOf(id);
+      });
+      resolve(tx);
+    } catch (error) {
+      reportError(error);
+      reject(error);
+    }
+  });
+};
+
 const loadPayroll = async (id) => {
   try {
     if (!ethereum) reportError("Please install Metamask!");
@@ -301,6 +343,27 @@ const updateWorker = async ({ wid, id, name, account }) => {
     try {
       const contract = await getEthereumContract();
       const tx = await contract.updateWorker(wid, id, name, account);
+
+      tx.wait().then(async () => {
+        await loadData();
+        await loadPayroll(id);
+        await loadWorkersOf(id);
+      });
+      resolve(tx);
+    } catch (error) {
+      reportError(error);
+      reject(error);
+    }
+  });
+};
+
+const payWorkers = async ({ id }) => {
+  if (!ethereum) reportError("Please install Metamask!");
+
+  return new Promise(async (resolve, reject) => {
+    try {
+      const contract = await getEthereumContract();
+      const tx = await contract.payWorkers(id);
 
       tx.wait().then(async () => {
         await loadData();
@@ -381,10 +444,13 @@ export {
   updateOrg,
   createPayroll,
   updatePayroll,
+  submitPayroll,
+  approvePayroll,
   deletePayroll,
   loadPayrollByOrg,
   loadPayroll,
   createWorker,
   updateWorker,
+  payWorkers,
   loadWorkersOf,
 };
